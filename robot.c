@@ -96,7 +96,7 @@ int roomba_write(unsigned char outbyte)
 
 int roomba_drive(short velocity, short radius)
 {
-	if (roomba_write(137) == -1) return -1;
+	if (roomba_write(ROOMBA_DRIVE) == -1) return -1;
 	if (roomba_write((unsigned char)(velocity >> 8)) == -1) return -1;
 	if (roomba_write((unsigned char)(velocity & 0xFF)) == -1) return -1;
 	if (roomba_write((unsigned char)(radius >> 8)) == -1) return -1;
@@ -106,7 +106,7 @@ int roomba_drive(short velocity, short radius)
 
 int roomba_direct_drive(short left_velocity, short right_velocity)
 {
-	if (roomba_write(145) == -1) return -1;
+	if (roomba_write(ROOMBA_DIRECT_DRIVE) == -1) return -1;
 	if (roomba_write((unsigned char)(right_velocity >> 8)) == -1) return -1;
 	if (roomba_write((unsigned char)(right_velocity & 0xFF)) == -1) return -1;
 	if (roomba_write((unsigned char)(left_velocity >> 8)) == -1) return -1;
@@ -117,7 +117,7 @@ int roomba_direct_drive(short left_velocity, short right_velocity)
 int roomba_led(unsigned char play, unsigned char advance, unsigned char colour, unsigned char intensity)
 {
 	unsigned char flags = (play ? 2 : 0) | (advance ? 8 : 0);
-	if (roomba_write(139) == -1) return -1;
+	if (roomba_write(ROOMBA_LED) == -1) return -1;
 	if (roomba_write(flags) == -1) return -1;
 	if (roomba_write(colour) == -1) return -1;
 	if (roomba_write(intensity) == -1) return -1;
