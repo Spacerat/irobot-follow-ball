@@ -6,35 +6,66 @@
    rN   Read N bytes from the robot and print them on a line
 */
 
+#include "robot.h"
+#include "delay.h"
 #include <stdlib.h>
 #include <fcntl.h>
 #include <termios.h>
 #include <unistd.h> 
-#include <errno.h>
-#include <error.h>
+//#include <errno.h>
+//#include <error.h>
+
 #include <stdio.h>
+
 
 #define DEVICE "/dev/ttyUSB0"
 #define BUFSIZE (64)
 
-int ser;
+
+
+volatile static int ser;
+
+static int error(char* description) {
+	fprintf(stderr, "%s\n", description);
+	return -1;
+}
 
 int tty_init()
 {
 	struct termios termsettings;
-	if (tcgetattr(ser, &termsettings) == -1) // tcgetattr failed
-	if (cfsetispeed(&termsettings, B57600) == -1) // cfsetispeed failed
-	if (cfsetospeed(&termsettings, B57600) == -1) // cfsetospeed failed
+	if (tcgetattr(ser, &termsettings) == -1)
+		return error("tcgetattr failed");
+	if (cfsetispeed(&termsettings, B57600) == -1)
+		return error("tcgetattr failed");
+	if (cfsetospeed(&termsettings, B57600) == -1)
+		return error("tcgetattr failed");
 	cfmakeraw(&termsettings);
-	if (tcsetattr(ser, TCSANOW, &termsettings) == -1) // tcsetattr failed
+	if (tcsetattr(ser, TCSANOW, &termsettings) == -1)
+		return error("tcgetattr failed");
+	
+	
 	return 0;
 }
 
-int roomba_open()
+int roomba_open(int mode)
 {
 	ser = open(DEVICE, O_RDWR);
-	if (ser == -1) return -1; // Open failed
-	return tty_init();
+	if (ser == -1)
+		return error("Open failed");
+	if (tty_init() == -1)
+		return -1;
+	
+	roomba_write(ROOMBA_START);
+	delay(10);
+	if (mode == ROOMBA_MODE_FULL) {
+		roomba_write(ROOMBA_FULL);
+		fprintf(stdout, "Starting roomba in FULL mode!\n");
+	}
+	else {
+		roomba_write(ROOMBA_SAFE);
+		fprintf(stdout, "Starting roomba in SAFE mode!\n");
+	}
+	delay(10);
 }
 
 int roomba_close()
