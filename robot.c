@@ -106,7 +106,7 @@ int roomba_drive(short velocity, short radius)
 
 int roomba_direct_drive(short left_velocity, short right_velocity)
 {
-	if (roomba_write(ROOMBA_DIRECT_DRIVE) == -1) return -1;
+	if (roomba_write(ROOMBA_DRIVE_DIRECT) == -1) return -1;
 	if (roomba_write((unsigned char)(right_velocity >> 8)) == -1) return -1;
 	if (roomba_write((unsigned char)(right_velocity & 0xFF)) == -1) return -1;
 	if (roomba_write((unsigned char)(left_velocity >> 8)) == -1) return -1;
