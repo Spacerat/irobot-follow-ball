@@ -7,6 +7,6 @@ TARGET =
 DEPENDPATH += .
 LIBS += -lcv -lhighgui
 
-SOURCES += vision_test.cpp QOpenCVWidget.cpp MyCameraWindow.cpp vision.cpp
+SOURCES += vision_test.cpp QOpenCVWidget.cpp MyCameraWindow.cpp vision.c
 HEADERS += QOpenCVWidget.cpp MyCameraWindow.h vision.h
 
