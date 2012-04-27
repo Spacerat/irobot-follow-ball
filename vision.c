@@ -14,10 +14,10 @@ not sure exactly how yet.
 // void callibrate();
 
 /*
-	Basically, this should take the output of image_process
-	as input, and return the angle and distance to the ball.
-	
-	This is probably going to take a lot of tuning to get right.
+Basically, this should take the output of image_process
+as input, and return the angle and distance to the ball.
+
+This is probably going to take a lot of tuning to get right.
 */
 void get_heading(int xpos, int area, float * angle, int * distance) {
 
@@ -31,46 +31,46 @@ void vision_init() {
 }
 
 
-    
+
 
 /*
 Process an IplImage (from the camera) and get values for
 the X position of the ball on the screen, and its size.
 */
 void image_process(IplImag *image, int * xpos, int * area) {
-    //IplImage *image=cvQueryFrame(camera);
-    unsigned char * pixel_data = (unsigned char *)(image->imageData);
-    int w = image->width;
-    int h = image->height;
-    int c = image->nChannels;
-    int area = 0;
-    int moment = 0;
-    int y = 0;
-    while (y<h) {
-      int x = 0;
-      while (x < w) {
-        unsigned char * blue  = pixel_data;
-        unsigned char * green = pixel_data + 1;
-        unsigned char * red   = pixel_data + 2;
-        if (((RED_MUL*(int)*red) > (BLUEGREEN_MUL*((int)*blue + (int)* green))) 
-            & (*red > RED_MIN)) {
-          //*red = 255;
-          area = area +1;
-          moment = moment + x; 
-        } else {
-          //*red = 0;
-        }
-        //*blue = 0;
-        //*green = 0;
-        pixel_data = pixel_data + c; 
-        x = x + 1;
-      }
-      y = y + 1;
-    }
-    if (area > AREA_MIN) {
-      int xpos = moment/area;
-      return 0;
-    }
-    return 1;
+	//IplImage *image=cvQueryFrame(camera);
+	unsigned char * pixel_data = (unsigned char *)(image->imageData);
+	int w = image->width;
+	int h = image->height;
+	int c = image->nChannels;
+	int area = 0;
+	int moment = 0;
+	int y = 0;
+	while (y<h) {
+		int x = 0;
+		while (x < w) {
+			unsigned char * blue  = pixel_data;
+			unsigned char * green = pixel_data + 1;
+			unsigned char * red   = pixel_data + 2;
+			if (((RED_MUL*(int)*red) > (BLUEGREEN_MUL*((int)*blue + (int)* green))) 
+			& (*red > RED_MIN)) {
+				*red = 255;
+				area = area +1;
+				moment = moment + x; 
+			} else {
+			//*red = 0;
+			}
+			//*blue = 0;
+			//*green = 0;
+			pixel_data = pixel_data + c; 
+			x = x + 1;
+		}
+		y = y + 1;
+	}
+	if (area > AREA_MIN) {
+		int xpos = moment/area;
+		return 0;
+	}
+	return 1;
 }
 
