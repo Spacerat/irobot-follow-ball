@@ -14,3 +14,9 @@
 *.lai
 *.la
 *.a
+
+# Binaries
+
+robot_cmd
+robot_test
+vision_test
