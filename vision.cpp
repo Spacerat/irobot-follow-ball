@@ -1,3 +1,5 @@
+#include "vision.h"
+
 #define RED_MIN 128
 #define RED_MUL 4
 #define BLUEGREEN_MUL 3
@@ -26,7 +28,7 @@ void get_heading(int xpos, int area, float * angle, int * distance) {
 void vision_init() {
 	camera = cvCreateCameraCapture(0);
 	assert(camera);
-	image=cvQueryFrame(camera);
+	image = cvQueryFrame(camera);
 	assert(image);
 }
 
@@ -47,7 +49,7 @@ IplImage * vision_getframe() {
 	return image;
 }
 
-CvCapture vision_getcamera() {
+CvCapture * vision_getcamera() {
 	return camera;
 }
 
@@ -55,12 +57,12 @@ CvCapture vision_getcamera() {
 Process an IplImage (from the camera) and get values for
 the X position of the ball on the screen, and its size.
 */
-void image_process(int * xpos, int * area) {
+int image_process(int * xpos, int * area) {
 	unsigned char * pixel_data = (unsigned char *)(image->imageData);
 	int w = image->width;
 	int h = image->height;
 	int c = image->nChannels;
-	area = 0;
+	*area = 0;
 	int moment = 0;
 	int y = 0;
 	while (y<h) {
@@ -72,7 +74,7 @@ void image_process(int * xpos, int * area) {
 			if (((RED_MUL*(int)*red) > (BLUEGREEN_MUL*((int)*blue + (int)* green))) 
 			& (*red > RED_MIN)) {
 				*red = 255;
-				area = area +1;
+				*area = *area + 1;
 				moment = moment + x; 
 			} else {
 				*red = 0;
@@ -84,8 +86,8 @@ void image_process(int * xpos, int * area) {
 		}
 		y = y + 1;
 	}
-	if (area > AREA_MIN) {
-		xpos = moment/area;
+	if (*area > AREA_MIN) {
+		*xpos = moment / *area;
 		return 0;
 	}
 	return 1;
