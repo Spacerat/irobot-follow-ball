@@ -46,6 +46,8 @@ returns a pointer to it.
 IplImage * vision_getframe() {
 	image = cvQueryFrame(camera);
 	assert(image);
+	int xpos, area;
+	image_process(&xpos, &area);
 	return image;
 }
 
