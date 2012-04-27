@@ -13,6 +13,10 @@ void roombath_direct_drive(int l, int r) {
 	rightSpeed = r;
 }
 
+void roombath_thread_end() {
+	next_command = ROOMBA_END;
+}
+
 void * roomba_thread_func(void * ptr) {
 	run_thread = 1;
 	while (run_thread) {

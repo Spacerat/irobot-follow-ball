@@ -7,7 +7,7 @@ It's also a nice way to remote-control the robot.
 
 #include <stdio.h>
 #include "robot_threaded.h"
-#include "cbuffer.h"
+#include "vision.h"
 #include <string.h>
 #include <pthread.h>
 #include <stdlib.h>
@@ -27,9 +27,9 @@ void * stdio_thread_func(void * ptr) {
 	
 	while (run) {
 		printf("> ");
-		delaytime = 0;
-		if (strcmp("q") == 0) {
+		if (strcmp("q", command) == 0) {
 			run = 0;
+			roombath_thread_end();
 		}
 		printf("\n");
 	}
