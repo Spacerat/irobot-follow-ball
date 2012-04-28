@@ -6,22 +6,17 @@ It's also a nice way to remote-control the robot.
 */
 
 #include <stdio.h>
-#include "robot_threaded.h"
-#include "vision.h"
 #include <string.h>
 #include <pthread.h>
 #include <stdlib.h>
 
+#include "robot_threaded.h"
+#include "robot.h"
+#include "vision.h"
+
 volatile int run = 1;
 
 
-
-#define goleft 1
-#define goright 2
-#define goforward 3
-#define goback 4
-#define gowait 5
-#define goquit 6
 void * stdio_thread_func(void * ptr) {
 	char command [10];
 	

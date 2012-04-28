@@ -34,6 +34,8 @@
 #define ROOMBA_MODE_SAFE 0
 #define ROOMBA_MODE_FULL 1
 
+#define ROOMBA_END 10
+#define ROOMBA_CONTINUE 11
 
 int roomba_open(int mode);
 int roomba_close();
