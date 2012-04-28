@@ -15,8 +15,11 @@
 *.la
 *.a
 
-# Binaries
+# Binaries and things
 
 robot_cmd
 robot_test
 vision_test
+qmakefile
+robot_main
+
