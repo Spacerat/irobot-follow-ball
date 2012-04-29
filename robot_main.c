@@ -22,6 +22,7 @@ void * stdio_thread_func(void * ptr) {
 	
 	while (run) {
 		printf("> ");
+		scanf("%s", command);
 		if (strcmp("q", command) == 0) {
 			run = 0;
 			roombath_thread_end();
@@ -35,10 +36,11 @@ void * stdio_thread_func(void * ptr) {
 void * control_thread_func(void * ptr) {
 	int xpos, area;
 	while (run) {
-		image_update();
+		vision_getframe();
 		if (image_process(&xpos, &area)) {
+		//if (1) {
 			//No ball
-			roombath_direct_drive(1000,400);
+			roombath_direct_drive(1000,100);
 		}
 		else {
 			//ball found
@@ -54,6 +56,8 @@ int main()
 		return 1;
 	}
 	pthread_t stdio_thread, roomba_thread, control_thread;
+	
+	vision_init();
 	
 	pthread_create( &stdio_thread, NULL, &stdio_thread_func, NULL);
 	pthread_create( &roomba_thread, NULL, &roomba_thread_func, NULL);
