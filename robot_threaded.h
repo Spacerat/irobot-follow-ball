@@ -1,6 +1,6 @@
 
-#ifndef _roomba_threaded_h
-#define _roomba_threaded_h
+#ifndef _robot_threaded_h_
+#define _robot_threaded_h_
 
 #include "robot.h"
 
