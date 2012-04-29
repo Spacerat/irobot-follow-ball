@@ -15,6 +15,8 @@ void roombath_direct_drive(int l, int r) {
 
 void roombath_thread_end() {
 	next_command = ROOMBA_END;
+	roomba_direct_drive(0, 0);
+	run_thread = 0;
 }
 
 void * roomba_thread_func(void * ptr) {
@@ -25,10 +27,10 @@ void * roomba_thread_func(void * ptr) {
 				roomba_direct_drive(leftSpeed, rightSpeed);
 				break;
 			case ROOMBA_END:
+				roomba_direct_drive(0, 0);
 				run_thread = 0;
 				break;
 		}
 		next_command = ROOMBA_CONTINUE;
 	}
-
 }

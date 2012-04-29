@@ -9,13 +9,18 @@ It's also a nice way to remote-control the robot.
 #include <string.h>
 #include <pthread.h>
 #include <stdlib.h>
-
+#include  <signal.h>
 #include "robot_threaded.h"
 #include "robot.h"
 #include "vision.h"
 
 volatile int run = 1;
 
+
+void shutdown(int sig) {
+	run = 0;
+	roombath_thread_end();
+}
 
 void * stdio_thread_func(void * ptr) {
 	char command [10];
@@ -24,8 +29,7 @@ void * stdio_thread_func(void * ptr) {
 		printf("> ");
 		scanf("%s", command);
 		if (strcmp("q", command) == 0) {
-			run = 0;
-			roombath_thread_end();
+			shutdown(0);
 		}
 		printf("\n");
 	}
@@ -35,15 +39,23 @@ void * stdio_thread_func(void * ptr) {
 
 void * control_thread_func(void * ptr) {
 	int xpos, area;
+	static int ballfound = 0;
+	
 	while (run) {
 		vision_getframe();
 		if (image_process(&xpos, &area)) {
-		//if (1) {
 			//No ball
-			roombath_direct_drive(1000,100);
+			if (ballfound) {
+				roombath_direct_drive(1000,100);
+				printf("Ball lost.\n");
+				ballfound = 0;
+			}
 		}
 		else {
-			//ball found
+			//Ball found
+			ballfound = 1;
+			roombath_direct_drive(100,100);
+
 		}
 		
 	}
@@ -51,6 +63,9 @@ void * control_thread_func(void * ptr) {
 
 int main()
 {
+	signal(SIGQUIT, shutdown);
+	signal(SIGINT, shutdown);
+	
 	if(roomba_open(ROOMBA_MODE_SAFE) == -1) {
 		fprintf(stderr, "Open failed. Check the USB cable!\nHave you remembered to run $sudo chmod ugo+rw /dev/ttyUSB0 ?\n");
 		return 1;
