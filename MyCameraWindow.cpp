@@ -14,6 +14,8 @@ MyCameraWindow::MyCameraWindow(CvCapture * cam, QWidget * parent) : QWidget(pare
 
 void MyCameraWindow::timerEvent(QTimerEvent *) {
     IplImage * image = vision_getframe();
+    int xpos, area, width;
+    image_process(&xpos, &area, &width);
     cvwidget->putImage(image);
 }
 

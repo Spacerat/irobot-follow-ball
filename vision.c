@@ -1,9 +1,12 @@
 #include "vision.h"
+#include <math.h>
 
-#define RED_MIN 128
+#define RED_MIN 64
 #define RED_MUL 4
 #define BLUEGREEN_MUL 3
 #define AREA_MIN 1000
+#define RED_HUE_SHIFT -0.15f
+#define RED_HUE_WIDTH 0.15f
 
 //#define VISION_TEST
 
@@ -75,13 +78,15 @@ int image_process(int * xpos, int * area, int * width) {
 			unsigned char * blue  = pixel_data;
 			unsigned char * green = pixel_data + 1;
 			unsigned char * red   = pixel_data + 2;
-			if (((RED_MUL*(int)*red) > (BLUEGREEN_MUL*((int)*blue + (int)* green))) 
-			& (*red > RED_MIN)) {
+			float hue = atan2(sqrt(3) * ((float)*green - (float)*blue), 2.f * (float)*red - (float)*green - (float)*blue);
+			//if (((RED_MUL*(int)*red) > (BLUEGREEN_MUL*((int)*blue + (int)* green))) 
+			//& (*red > RED_MIN)) {
+			if (hue > RED_HUE_SHIFT-RED_HUE_WIDTH && hue < RED_HUE_SHIFT+RED_HUE_WIDTH) {
 				*red = 255;
 				*area = *area + 1;
 				moment = moment + x; 
 			} else {
-				//*red = 0;
+				*red = 0;
 			}
 			//*blue = 0;
 			//*green = 0;
