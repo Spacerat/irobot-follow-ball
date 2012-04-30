@@ -3,8 +3,9 @@
 #define RED_MIN 128
 #define RED_MUL 4
 #define BLUEGREEN_MUL 3
-#define AREA_MIN 4000
+#define AREA_MIN 1000
 
+//#define VISION_TEST
 
 static CvCapture * camera;
 static IplImage * image;
@@ -46,8 +47,8 @@ returns a pointer to it.
 IplImage * vision_getframe() {
 	image = cvQueryFrame(camera);
 	assert(image);
-	int xpos, area;
-	image_process(&xpos, &area);
+	//int xpos, area;
+	//image_process(&xpos, &area);
 	return image;
 }
 
@@ -59,11 +60,12 @@ CvCapture * vision_getcamera() {
 Process an IplImage (from the camera) and get values for
 the X position of the ball on the screen, and its size.
 */
-int image_process(int * xpos, int * area) {
+int image_process(int * xpos, int * area, int * width) {
 	unsigned char * pixel_data = (unsigned char *)(image->imageData);
 	int w = image->width;
 	int h = image->height;
 	int c = image->nChannels;
+	*width = image->width;
 	*area = 0;
 	int moment = 0;
 	int y = 0;
@@ -79,7 +81,7 @@ int image_process(int * xpos, int * area) {
 				*area = *area + 1;
 				moment = moment + x; 
 			} else {
-				*red = 0;
+				//*red = 0;
 			}
 			//*blue = 0;
 			//*green = 0;
@@ -90,6 +92,15 @@ int image_process(int * xpos, int * area) {
 	}
 	if (*area > AREA_MIN) {
 		*xpos = moment / *area;
+		#ifdef VISION_TEST
+		unsigned char * blue_pixel =  (unsigned char *)(image->imageData) + c * *xpos;
+		for (y = 0; y < image->height; y++) {
+			* blue_pixel = 255;
+			blue_pixel = blue_pixel + c*w;
+		    y = y+1;
+		}
+		printf("%d\n", *xpos);
+		#endif
 		return 0;
 	}
 	return 1;

@@ -38,15 +38,15 @@ void * stdio_thread_func(void * ptr) {
 
 
 void * control_thread_func(void * ptr) {
-	int xpos, area;
+	int xpos, area, width;
 	static int ballfound = 0;
 	
 	while (run) {
 		vision_getframe();
-		if (image_process(&xpos, &area)) {
+		if (image_process(&xpos, &area, &width)) {
 			//No ball
 			if (ballfound) {
-				roombath_direct_drive(1000,100);
+				roombath_direct_drive(500,100);
 				printf("Ball lost.\n");
 				ballfound = 0;
 			}
