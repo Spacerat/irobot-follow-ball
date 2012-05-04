@@ -5,10 +5,17 @@
 #define RED_MUL 4
 #define BLUEGREEN_MUL 3
 #define AREA_MIN 1000
-#define RED_HUE_SHIFT -0.15f
-#define RED_HUE_WIDTH 0.15f
 
-//#define VISION_TEST
+#define RED_HUE_MIN -0.3f
+#define RED_HUE_MAX 0.1f
+#define RED_BRIGHT_MIN 0.f
+#define RED_BRIGHT_MAX 1.f
+#define RED_SAT_MIN 0.35f
+#define RED_SAT_MAX 1.f
+
+#define min(x, y) ((x) < (y) ? (x) : (y))
+
+#define VISION_TEST
 
 static CvCapture * camera;
 static IplImage * image;
@@ -78,15 +85,23 @@ int image_process(int * xpos, int * area, int * width) {
 			unsigned char * blue  = pixel_data;
 			unsigned char * green = pixel_data + 1;
 			unsigned char * red   = pixel_data + 2;
-			float hue = atan2(sqrt(3) * ((float)*green - (float)*blue), 2.f * (float)*red - (float)*green - (float)*blue);
-			//if (((RED_MUL*(int)*red) > (BLUEGREEN_MUL*((int)*blue + (int)* green))) 
-			//& (*red > RED_MIN)) {
-			if (hue > RED_HUE_SHIFT-RED_HUE_WIDTH && hue < RED_HUE_SHIFT+RED_HUE_WIDTH) {
+
+			float fblue  = (float)*blue  / 255.f;
+			float fgreen = (float)*green / 255.f;
+			float fred   = (float)*red   / 255.f;
+
+			float hue = atan2(sqrt(3) * (fgreen - fblue), 2.f * fred - fgreen - fblue);
+			float bright = (0.2126f * fred) + (0.7152f * fgreen) + (0.0722f * fblue);
+			float sat = 1.f - (3.f * min(min(fred, fgreen), fblue) / (fred + fgreen + fblue));
+
+			if (hue > RED_HUE_MIN && hue < RED_HUE_MAX &&
+				bright > RED_BRIGHT_MIN && bright < RED_BRIGHT_MAX &&
+				sat > RED_SAT_MIN && sat < RED_SAT_MAX) {
 				*red = 255;
 				*area = *area + 1;
 				moment = moment + x; 
 			} else {
-				*red = 0;
+				//*red = *red >> 1;
 			}
 			//*blue = 0;
 			//*green = 0;
@@ -104,7 +119,6 @@ int image_process(int * xpos, int * area, int * width) {
 			blue_pixel = blue_pixel + c*w;
 		    y = y+1;
 		}
-		printf("%d\n", *xpos);
 		#endif
 		return 0;
 	}
