@@ -17,6 +17,7 @@ MyCameraWindow::MyCameraWindow(CvCapture * cam, QWidget * parent) : QWidget(pare
 
 void QOpenCVWidget::mousePressEvent(QMouseEvent * event) {
 	printf("%f\n", calibrate(event->x(), event->y()));
+	writeCalibration();
 }
 
 void MyCameraWindow::timerEvent(QTimerEvent *) {

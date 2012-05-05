@@ -52,6 +52,9 @@ CvCapture * vision_getcamera() {
 	return camera;
 }
 
+/*
+Calibrates the hue and saturation ranges to the pixel specified.
+*/
 float calibrate(int xpos, int ypos) {
 	if(!image) return 0.f;
 	if(xpos < 5 || xpos > image->width || ypos < 5 || ypos > image->height) return 0.f;
@@ -87,6 +90,30 @@ float calibrate(int xpos, int ypos) {
 	satMax = sat + 0.3f;
 	
 	return hue;
+}
+
+/*
+Reads the calibration values from the given file.
+*/
+int readCalibration(char * fileName) {
+	FILE * f = fopen(fileName, "rb");
+	fscanf(f, "%f", &hueMin);
+	fscanf(f, "%f", &hueMax);
+	fscanf(f, "%f", &satMin);
+	fscanf(f, "%f", &satMax);
+	fclose(f);
+}
+
+/*
+Writes the calibration values from the given file.
+*/
+int writeCalibration(char * fileName) {
+	FILE * f = fopen(fileName, "wb");
+	fprintf(f, "%f", hueMin);
+	fprintf(f, "%f", hueMax);
+	fprintf(f, "%f", satMin);
+	fprintf(f, "%f", satMax);
+	fclose(f);
 }
 
 /*

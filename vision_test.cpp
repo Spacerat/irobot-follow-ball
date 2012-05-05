@@ -12,6 +12,8 @@
 int main(int argc, char ** argv) {
     vision_init();
 
+	readCalibration();
+	
     QApplication app(argc, argv);
     MyCameraWindow * mainWin = new MyCameraWindow(vision_getcamera());
     mainWin->setWindowTitle("Roomba vision test");

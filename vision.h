@@ -14,6 +14,8 @@ IplImage * vision_getframe();
 CvCapture * vision_getcamera();
 float calibrate(int xpos, int ypos);
 int image_process(int * xpos, int * area, int * width);
+int readCalibration(char * fileName);
+int writeCalibration(char * fileName);
 
 #endif
 
