@@ -10,7 +10,7 @@
 #define RED_HUE_MAX 0.1f
 #define RED_BRIGHT_MIN 0.f
 #define RED_BRIGHT_MAX 1.f
-#define RED_SAT_MIN 0.35f
+#define RED_SAT_MIN 0.36f
 #define RED_SAT_MAX 1.f
 
 #define min(x, y) ((x) < (y) ? (x) : (y))
@@ -101,10 +101,10 @@ int image_process(int * xpos, int * area, int * width) {
 				*area = *area + 1;
 				moment = moment + x; 
 			} else {
-				//*red = *red >> 1;
+				*red = *red >> 1;
 			}
-			//*blue = 0;
-			//*green = 0;
+			*blue = *blue >> 1;
+			*green = *green >> 1;
 			pixel_data = pixel_data + c; 
 			x = x + 1;
 		}
@@ -117,7 +117,7 @@ int image_process(int * xpos, int * area, int * width) {
 		for (y = 0; y < image->height; y++) {
 			* blue_pixel = 255;
 			blue_pixel = blue_pixel + c*w;
-		    y = y+1;
+			y = y+1;
 		}
 		#endif
 		return 0;
