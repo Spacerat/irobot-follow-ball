@@ -8,9 +8,9 @@
 
 static float hueMin    = -0.3f;
 static float hueMax    =  0.1f;
-static float brightMin =  0.f;
-static float brightMax =  1.f;
-static float satMin    =  0.f;
+static float brightMin =  0.1f;
+static float brightMax =  0.9f;
+static float satMin    =  0.36f;
 static float satMax    =  1.f;
 
 #define min(x, y) ((x) < (y) ? (x) : (y))
