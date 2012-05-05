@@ -39,12 +39,14 @@ void * stdio_thread_func(void * ptr) {
 }
 
 void * control_thread_func(void * ptr) {
-	int xpos, area, width, centre, l_speed, r_speed;
-	float diff;
 	static int ballfound = 0;
-	centre = width / 2;
-	diff = 2*(xpos - centre)/width;			
-	offset = 1/area;
+	
+	int xpos, area, width, l_speed, r_speed;
+	float diff;
+	float offset, centre;
+	centre = width / 2.0f;
+	diff = 2.0f*(xpos - centre)/width;			
+	offset = 1.0f/area;
 	l_speed = offset + SCALE*diff;
 	r_speed = offset - SCALE*diff;
 	
