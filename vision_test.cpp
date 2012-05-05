@@ -12,7 +12,7 @@
 int main(int argc, char ** argv) {
     vision_init();
 
-	readCalibration();
+	readCalibration("calibration.txt");
 	
     QApplication app(argc, argv);
     MyCameraWindow * mainWin = new MyCameraWindow(vision_getcamera());
