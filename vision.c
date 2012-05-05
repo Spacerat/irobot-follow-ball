@@ -60,8 +60,8 @@ float calibrate(int xpos, int ypos) {
 	
 	float totalHue = 0.f;
 	int x, y;	
-	for(x = xpos - 5; x < xpos + 5; x++) {
-		for(y = ypos - 5; y < ypos + 5; y++) {
+	for(x = xpos; x < xpos+1; x++) {
+		for(y = ypos; y < ypos+1; y++) {
 		
 			unsigned char * blue  = pixel_data;
 			unsigned char * green = pixel_data + 1;
@@ -75,7 +75,7 @@ float calibrate(int xpos, int ypos) {
 		}
 	}
 	
-	float hue = totalHue / 100.f;
+	float hue = totalHue / 1.f;
 	
 	hueMin = hue - 0.2f;
 	hueMax = hue + 0.2f;
