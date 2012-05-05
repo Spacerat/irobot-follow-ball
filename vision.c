@@ -9,7 +9,7 @@
 static float hueMin    = 0.f;
 static float hueMax    = 0.f;
 static float brightMin = 0.f;
-static float brightMax = 0.f;
+static float brightMax = 1.f;
 static float satMin    = 0.f;
 static float satMax    = 0.f;
 
