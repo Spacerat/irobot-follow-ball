@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "QOpenCVWidget.h"
-
+#include <QMouseEvent>
 // Constructor
 QOpenCVWidget::QOpenCVWidget(QWidget *parent) : QWidget(parent) {
     layout = new QVBoxLayout;
