@@ -59,7 +59,7 @@ float calibrate(int xpos, int ypos) {
 	unsigned char * pixel_data = (unsigned char *)(image->imageData);
 	
 	float totalHue = 0.f;
-	int x, y;	
+	int x, y, w = image->width;	
 	for(x = xpos; x < xpos + 1; x++) {
 		for(y = ypos; y < ypos + 1; y++) {
 		
