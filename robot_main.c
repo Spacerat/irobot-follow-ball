@@ -9,10 +9,13 @@ It's also a nice way to remote-control the robot.
 #include <string.h>
 #include <pthread.h>
 #include <stdlib.h>
-#include  <signal.h>
+#include <signal.h>
+#include <math.h>
 #include "robot_threaded.h"
 #include "robot.h"
 #include "vision.h"
+
+#define SCALE 5
 
 volatile int run = 1;
 
@@ -35,18 +38,22 @@ void * stdio_thread_func(void * ptr) {
 	}
 }
 
-
-
 void * control_thread_func(void * ptr) {
-	int xpos, area, width;
+	int xpos, area, width, centre, l_speed, r_speed;
+	float diff;
 	static int ballfound = 0;
+	centre = width / 2;
+	diff = 2*(xpos - centre)/width;			
+	offset = 1/area;
+	l_speed = offset + SCALE*diff;
+	r_speed = offset - SCALE*diff;
 	
 	while (run) {
 		vision_getframe();
 		if (image_process(&xpos, &area, &width)) {
 			//No ball
 			if (ballfound) {
-				roombath_direct_drive(500,100);
+				roombath_direct_drive(l_speed, r_speed);
 				printf("Ball lost.\n");
 				ballfound = 0;
 			}
