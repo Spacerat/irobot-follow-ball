@@ -10,7 +10,7 @@ static int hueMin    = -0.3f;
 static int hueMax    =  0.1f;
 static int brightMin =  0.f;
 static int brightMax =  1.f;
-static int satMin    =  0.36f;
+static int satMin    =  0.f;
 static int satMax    =  1.f;
 
 #define min(x, y) ((x) < (y) ? (x) : (y))
