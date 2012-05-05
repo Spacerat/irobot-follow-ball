@@ -15,27 +15,12 @@
 
 #define min(x, y) ((x) < (y) ? (x) : (y))
 
-#define VISION_TEST
-
+static IplImage  * image;
 static CvCapture * camera;
-static IplImage * image;
 
 /*
-We're going to need some kind of callibrations stuff, but I'm
-not sure exactly how yet.
+Initiailises the camera and gets the first frame from it.
 */
-// void callibrate();
-
-/*
-Basically, this should take the output of image_process
-as input, and return the angle and distance to the ball.
-
-This is probably going to take a lot of tuning to get right.
-*/
-void get_heading(int xpos, int area, float * angle, int * distance) {
-
-}
-
 void vision_init() {
 	camera = cvCreateCameraCapture(0);
 	assert(camera);
@@ -47,7 +32,7 @@ void vision_init() {
 Frees the camera upon exiting the program.
 */
 void vision_free() {	
-    cvReleaseCapture(&camera);
+	cvReleaseCapture(&camera);
 }
 
 /*
@@ -57,11 +42,12 @@ returns a pointer to it.
 IplImage * vision_getframe() {
 	image = cvQueryFrame(camera);
 	assert(image);
-	//int xpos, area;
-	//image_process(&xpos, &area);
 	return image;
 }
 
+/*
+Returns the camera descriptor (CvCapture *) of that opened camera.
+*/
 CvCapture * vision_getcamera() {
 	return camera;
 }
@@ -112,14 +98,12 @@ int image_process(int * xpos, int * area, int * width) {
 	}
 	if (*area > AREA_MIN) {
 		*xpos = moment / *area;
-		#ifdef VISION_TEST
 		unsigned char * blue_pixel =  (unsigned char *)(image->imageData) + c * *xpos;
 		for (y = 0; y < image->height; y++) {
 			* blue_pixel = 255;
 			blue_pixel = blue_pixel + c*w;
 			y = y+1;
 		}
-		#endif
 		return 0;
 	}
 	return 1;
