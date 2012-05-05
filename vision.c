@@ -86,8 +86,8 @@ float calibrate(int xpos, int ypos) {
 	hueMin = hue - 0.2f;
 	hueMax = hue + 0.2f;
 	
-	satMin = sat - 0.3f;
-	satMax = sat + 0.3f;
+	satMin = sat - 0.2f;
+	satMax = sat + 0.2f;
 	
 	return hue;
 }
