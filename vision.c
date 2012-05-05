@@ -59,9 +59,9 @@ float calibrate(int xpos, int ypos) {
 	unsigned char * pixel_data = (unsigned char *)(image->imageData);
 	
 	float totalHue = 0.f;
-	
-	for(int x = xpos - 5; x < xpos + 5; x++) {
-		for(int y = ypos - 5; y < ypos + 5; y++) {
+	int x, y;	
+	for(x = xpos - 5; x < xpos + 5; x++) {
+		for(y = ypos - 5; y < ypos + 5; y++) {
 		
 			unsigned char * blue  = pixel_data;
 			unsigned char * green = pixel_data + 1;

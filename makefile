@@ -13,7 +13,7 @@ robot_test: robot_test.c robot.o delay.o
 robot_cmd: robot_cmd.c robot.o delay.o cbuffer.o
 	gcc robot_cmd.c robot.o delay.o cbuffer.o -o robot_cmd -lpthread
 	
-vision_test:
+vision_test: vision_test.cpp vision.o
 	qmake -o qmakefile vision_test.pro
 	make -f qmakefile
 	

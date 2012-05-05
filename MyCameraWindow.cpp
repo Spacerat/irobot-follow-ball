@@ -1,5 +1,8 @@
 #include "MyCameraWindow.h"
 #include "vision.h"
+#include <QMouseEvent>
+#include <stdio.h>
+#include "QOpenCVWidget.h"
 
 MyCameraWindow::MyCameraWindow(CvCapture * cam, QWidget * parent) : QWidget(parent) {
     camera = cam;
@@ -10,6 +13,10 @@ MyCameraWindow::MyCameraWindow(CvCapture * cam, QWidget * parent) : QWidget(pare
     resize(500, 400);
 
     startTimer(100);  // 0.1-second timer
+}
+
+void QOpenCVWidget::mousePressEvent(QMouseEvent * event) {
+	printf("%f\n", calibrate(event->x(), event->y()));
 }
 
 void MyCameraWindow::timerEvent(QTimerEvent *) {

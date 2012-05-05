@@ -20,6 +20,7 @@ class MyCameraWindow : public QWidget
          
     protected:
         void timerEvent(QTimerEvent*);
+//	void mousePressEvent(QMouseEvent * event);
 };
 
 

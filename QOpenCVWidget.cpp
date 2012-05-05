@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "QOpenCVWidget.h"
 #include <QMouseEvent>
+
 // Constructor
 QOpenCVWidget::QOpenCVWidget(QWidget *parent) : QWidget(parent) {
     layout = new QVBoxLayout;
@@ -22,10 +23,6 @@ QOpenCVWidget::~QOpenCVWidget(void) {
     
 }
 
-void QOpenCVWidget::mousePressEvent(QMouseEvent * event) {
-	printf("Hue at %d %d: ", event->x(), event->y());
-	printf("%f", calibrate(event->x(), event->y()));
-}
 
 void QOpenCVWidget::putImage(IplImage *cvimage) {
     int cvIndex, cvLineStart;
