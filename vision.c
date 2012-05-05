@@ -96,25 +96,29 @@ float calibrate(int xpos, int ypos) {
 /*
 Reads the calibration values from the given file.
 */
-int readCalibration(char * fileName) {
+int readCalibration(const char * fileName) {
 	FILE * f = fopen(fileName, "rb");
+	if(!f) return -1;
 	fscanf(f, "%f", &hueMin);
 	fscanf(f, "%f", &hueMax);
 	fscanf(f, "%f", &satMin);
 	fscanf(f, "%f", &satMax);
 	fclose(f);
+	return 0;
 }
 
 /*
 Writes the calibration values from the given file.
 */
-int writeCalibration(char * fileName) {
+int writeCalibration(const char * fileName) {
 	FILE * f = fopen(fileName, "wb");
+	if(!f) return -1;
 	fprintf(f, "%f", hueMin);
 	fprintf(f, "%f", hueMax);
 	fprintf(f, "%f", satMin);
 	fprintf(f, "%f", satMax);
 	fclose(f);
+	return 0;
 }
 
 /*
