@@ -63,9 +63,9 @@ float calibrate(int xpos, int ypos) {
 	for(x = xpos; x < xpos + 1; x++) {
 		for(y = ypos; y < ypos + 1; y++) {
 		
-			unsigned char * blue  = pixel_data;
-			unsigned char * green = pixel_data + 1;
-			unsigned char * red   = pixel_data + 2;
+			unsigned char * blue  = pixel_data + x*3 + y*w*3;
+			unsigned char * green = pixel_data + x*3 + y*w*3 + 1;
+			unsigned char * red   = pixel_data + x*3 + y*w*3 + 2;
 
 			float fblue  = (float)*blue  / 255.f;
 			float fgreen = (float)*green / 255.f;
