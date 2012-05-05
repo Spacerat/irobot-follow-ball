@@ -171,7 +171,6 @@ int image_process(int * xpos, int * area, int * width) {
 		for (y = 0; y < image->height; y++) {
 			* blue_pixel = 255;
 			blue_pixel = blue_pixel + c*w;
-			y = y+1;
 		}
 		return 0;
 	}
