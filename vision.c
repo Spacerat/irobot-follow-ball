@@ -1,5 +1,6 @@
 #include "vision.h"
 #include <math.h>
+#include <stdio.h>
 
 #define RED_MIN 64
 #define RED_MUL 4
