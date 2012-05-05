@@ -23,7 +23,8 @@ QOpenCVWidget::~QOpenCVWidget(void) {
 }
 
 void QOpenCVWidget::mousePressEvent(QMouseEvent * event) {
-	printf("%d %d\n", event->x(), event->y());
+	printf("Hue at %d %d: ", event->x(), event->y());
+	printf("%f", calibrate(event->x(), event->y()));
 }
 
 void QOpenCVWidget::putImage(IplImage *cvimage) {
