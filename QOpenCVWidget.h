@@ -20,6 +20,8 @@ class QOpenCVWidget : public QWidget {
         QOpenCVWidget(QWidget *parent = 0);
         ~QOpenCVWidget(void);
         void putImage(IplImage *);
+       	
+        void mousePressEvent(QMouseEvent * event);
 }; 
 
 #endif

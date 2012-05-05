@@ -22,6 +22,10 @@ QOpenCVWidget::~QOpenCVWidget(void) {
     
 }
 
+void QOpenCVWidget::mousePressEvent(QMouseEvent * event) {
+	printf("%d %d\n", event->x(), event->y());
+}
+
 void QOpenCVWidget::putImage(IplImage *cvimage) {
     int cvIndex, cvLineStart;
     // switch between bit depths
