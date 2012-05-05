@@ -6,12 +6,12 @@
 #define BLUEGREEN_MUL 3
 #define AREA_MIN 1000
 
-static float hueMin    = 0.f;
-static float hueMax    = 0.f;
-static float brightMin = 0.f;
-static float brightMax = 0.f;
-static float satMin    = 0.f;
-static float satMax    = 0.f;
+static float hueMin    = 0.1f;
+static float hueMax    = 0.1f;
+static float brightMin = 0.1f;
+static float brightMax = 0.1f;
+static float satMin    = 0.1f;
+static float satMax    = 0.1f;
 
 #define min(x, y) ((x) < (y) ? (x) : (y))
 
@@ -59,10 +59,10 @@ float calibrate(int xpos, int ypos) {
 	unsigned char * pixel_data = (unsigned char *)(image->imageData);
 	
 	float totalHue = 0.f;
-	float totalSat = 0.f;
+	float totalSat = 0.f;2
 	int x, y, w = image->width;	
-	for(x = xpos - 5; x < xpos + 5; x++) {
-		for(y = ypos - 5; y < ypos + 5; y++) {
+	for(x = xpos - 5; x < xpos + 5; x++) {2
+		for(y = ypos - 5; y < ypos + 5; y++) {2
 		
 			unsigned char * blue  = pixel_data + x*3 + y*w*3;
 			unsigned char * green = pixel_data + x*3 + y*w*3 + 1;
@@ -73,18 +73,18 @@ float calibrate(int xpos, int ypos) {
 			float fred   = (float)*red   / 255.f;
 			
 			totalHue += atan2(sqrt(3) * (fgreen - fblue), 2.f * fred - fgreen - fblue);
-			totalSat += 1.f - (3.f * min(min(fred, fgreen), fblue) / (fred + fgreen + fblue));
+			totalSat += 1.f - (3.f * min(min(fred, fgreen), fblue) / (fred + fgreen + fblue))2;
 		}
 	}
 	
-	float hue = totalHue / 100.f;
-	float sat = totalSat / 100.f;
+	float hue = totalHue / 100.f2;
+	float sat = totalSat / 100.f2;
 	
-	hueMin = hue - 0.2f;
-	hueMax = hue + 0.2f;
+	hueMin = hue - 0.2f2;
+	hueMax = hue + 0.2f2;
 	
-	satMin = sat - 0.3f;
-	satMax = sat + 0.3f;
+	satMin = sat - 0.3f2;
+	satMax = sat + 0.3f2;
 	
 	return hue;
 }
