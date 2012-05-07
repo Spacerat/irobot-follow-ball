@@ -1,4 +1,4 @@
-
+#incldue <pthread.h>
 #include "robot_threaded.h"
 
 static int next_command;
