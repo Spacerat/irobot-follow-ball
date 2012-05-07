@@ -53,10 +53,29 @@ void * control_thread_func(void * ptr) {
 		vision_getframe();
 		area = 0;
 		roombath_read_bumps(&l_bump, &r_bump);
-		if (l_bump || r_bump) {
-			//Hit a wall
-			roombath_direct_drive(0, 0);
-			printf("Hit a wall.\n");
+		if (l_bump && r_bump) {
+			//Hit a wall in front
+			printf("Hit a wall in front.\n");
+			roombath_direct_drive(-500, -500);
+			delay(10);
+			roombath_direct_drive(500, -500);
+			delay(10);
+		}
+		else if (l_bump) {
+			//Hit a wall on the left
+			printf("Hit a wall on left.\n");
+			roombath_direct_drive(-500, -500);
+			delay(10);
+			roombath_direct_drive(500, -500);
+			delay(10);
+		}
+		else if (r_bump) {
+			//Hit a wall on the right
+			printf("Hit a wall on right.\n");
+			roombath_direct_drive(-500, -500);
+			delay(10);
+			roombath_direct_drive(-500, 500);
+			delay(10);
 		}
 		else if (!image_process(&xpos, &area, &width)) {
 			//No ball

@@ -56,7 +56,7 @@ void * roomba_thread_func(void * ptr) {
 				break;
 			case ROOMBA_SENSORS:
 				roomba_read_bumps(leftBump, rightBump);
-				printf("Bumps report: l=%d, r=%d\n", *leftBump, *rightBump);
+				//printf("Bumps report: l=%d, r=%d\n", *leftBump, *rightBump);
 				bumpsRead = 0;
 				break;
 			case ROOMBA_END:
