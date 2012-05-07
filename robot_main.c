@@ -92,11 +92,12 @@ void * control_thread_func(void * ptr) {
 			//Ball found
 			centre = width / 2.0f;
 			diff = 2.0f*(xpos - centre)/width;	
-			area /= 10000.f;
+			area -= 700;
+			area = area/10000;
 			distance = DIST_SCALE*(1.f/(area*area));
 			
-			l_speed = distance + DIFF_SCALE*diff;
-			r_speed = distance - DIFF_SCALE*diff;
+			l_speed = DIFF_SCALE*diff;
+			r_speed = -DIFF_SCALE*diff;
 
 			ballfound = 1;
 			roombath_direct_drive(l_speed,r_speed);
