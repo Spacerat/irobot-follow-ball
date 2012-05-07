@@ -29,13 +29,12 @@ void roombath_direct_drive(int l, int r) {
 
 void roombath_read_bumps(unsigned char * l, unsigned char * r) {
 	pthread_mutex_lock(&command_mutex);
-	bumpsRead = 0;
+	bumpsRead = 1;
 	leftBump = l;
 	rightBump = r;
 	next_command = ROOMBA_SENSORS;
 	pthread_mutex_unlock(&command_mutex);
 	while(bumpsRead) {}
-	bumpsRead = 0;
 }
 
 void roombath_thread_end() {
@@ -57,8 +56,8 @@ void * roomba_thread_func(void * ptr) {
 				break;
 			case ROOMBA_SENSORS:
 				roomba_read_bumps(leftBump, rightBump);
-				printf("Bumps report: l=%d, r=%d\n", leftSpeed, rightSpeed);
-				bumpsRead = 1;
+				printf("Bumps report: l=%d, r=%d\n", *leftBump, *rightBump);
+				bumpsRead = 0;
 				break;
 			case ROOMBA_END:
 				roomba_direct_drive(0, 0);
