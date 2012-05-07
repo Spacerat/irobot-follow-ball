@@ -34,5 +34,4 @@ cbuffer.o: cbuffer.c
 	
 clean:
 	rm -rf *.o
-	rm vision_test
 	
