@@ -2,7 +2,7 @@
 #include <math.h>
 #include <stdio.h>
 
-#define RED_MIN 64
+#define RED_MIN 128
 #define RED_MUL 4
 #define BLUEGREEN_MUL 3
 #define AREA_MIN 1000
@@ -121,6 +121,29 @@ int writeCalibration(const char * fileName) {
 	return 0;
 }
 
+int hue_test_func(unsigned char * blue, unsigned char * green, unsigned char * red) {
+	float fblue  = (float)*blue  / 255.f;
+	float fgreen = (float)*green / 255.f;
+	float fred   = (float)*red   / 255.f;
+
+	float hue = atan2(sqrt(3) * (fgreen - fblue), 2.f * fred - fgreen - fblue);
+	float bright = (0.2126f * fred) + (0.7152f * fgreen) + (0.0722f * fblue);
+	float sat = 1.f - (3.f * min(min(fred, fgreen), fblue) / (fred + fgreen + fblue));
+
+	if (hue    > hueMin    && hue    < hueMax &&
+		bright > brightMin && bright < brightMax &&
+		sat    > satMin    && sat    < satMax) {
+		return 1;
+	}
+	else return 0;
+}
+
+int original_test_func(unsigned char * blue, unsigned char * green, unsigned char * red) {
+	if (((RED_MUL*(int)*red) > (BLUEGREEN_MUL*((int)*blue + (int)* green))) 
+            & (*red > RED_MIN)) return 1;
+	else return 0;
+}
+
 /*
 Process an IplImage (from the camera) and get values for
 the X position of the ball on the screen, and its size.
@@ -141,17 +164,7 @@ int image_process(int * xpos, int * area, int * width) {
 			unsigned char * green = pixel_data + 1;
 			unsigned char * red   = pixel_data + 2;
 
-			float fblue  = (float)*blue  / 255.f;
-			float fgreen = (float)*green / 255.f;
-			float fred   = (float)*red   / 255.f;
-
-			float hue = atan2(sqrt(3) * (fgreen - fblue), 2.f * fred - fgreen - fblue);
-			float bright = (0.2126f * fred) + (0.7152f * fgreen) + (0.0722f * fblue);
-			float sat = 1.f - (3.f * min(min(fred, fgreen), fblue) / (fred + fgreen + fblue));
-
-			if (hue    > hueMin    && hue    < hueMax &&
-				bright > brightMin && bright < brightMax &&
-				sat    > satMin    && sat    < satMax) {
+			if (original_test_func(blue, green, red) {
 				*red = 255;
 				*area = *area + 1;
 				moment = moment + x; 

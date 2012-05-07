@@ -72,7 +72,7 @@ void * control_thread_func(void * ptr) {
 			roombath_direct_drive(l_speed,r_speed);
 
 		}
-		delay(100);
+		delay(10);
 	}
 }
 
