@@ -50,6 +50,8 @@ void * control_thread_func(void * ptr) {
 	l_speed = offset + SCALE*diff;
 	r_speed = offset - SCALE*diff;
 	
+	roombath_direct_drive(500, 100);
+
 	while (run) {
 		vision_getframe();
 		if (!image_process(&xpos, &area, &width)) {
