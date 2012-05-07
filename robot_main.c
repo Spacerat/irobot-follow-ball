@@ -49,6 +49,7 @@ void * control_thread_func(void * ptr) {
 
 	while (run) {
 		vision_getframe();
+		area = 0;
 		if (!image_process(&xpos, &area, &width)) {
 			//No ball
 			if (ballfound) {
