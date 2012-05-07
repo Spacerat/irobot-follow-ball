@@ -55,7 +55,6 @@ void * control_thread_func(void * ptr) {
 		roombath_read_bumps(&l_bump, &r_bump);
 		if (l_bump || r_bump) {
 			//Hit a wall
-			roombath_direct_drive(0, 0);
 			printf("Hit a wall.\n");
 		}
 		else if (!image_process(&xpos, &area, &width)) {
@@ -76,7 +75,7 @@ void * control_thread_func(void * ptr) {
 			distance = DIST_SCALE*(1/(area*area));
 			
 			l_speed = distance + DIFF_SCALE*diff;
-			r_speed = distance - DIFF_SCALE*diff;
+			r_speed = distance - SCALE*diff;
 
 			ballfound = 1;
 			roombath_direct_drive(l_speed,r_speed);
