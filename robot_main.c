@@ -56,26 +56,26 @@ void * control_thread_func(void * ptr) {
 		if (l_bump && r_bump) {
 			//Hit a wall in front
 			printf("Hit a wall in front.\n");
-			roombath_direct_drive(-500, -500);
-			delay(10);
+			roombath_direct_drive(-250, -250);
+			delay(40);
 			roombath_direct_drive(500, -500);
-			delay(10);
+			delay(5);
 		}
 		else if (l_bump) {
 			//Hit a wall on the left
 			printf("Hit a wall on left.\n");
-			roombath_direct_drive(-500, -500);
-			delay(10);
+			roombath_direct_drive(-250, -250);
+			delay(40);
 			roombath_direct_drive(500, -500);
-			delay(10);
+			delay(5);
 		}
 		else if (r_bump) {
 			//Hit a wall on the right
 			printf("Hit a wall on right.\n");
-			roombath_direct_drive(-500, -500);
-			delay(10);
+			roombath_direct_drive(-250, -250);
+			delay(40);
 			roombath_direct_drive(-500, 500);
-			delay(10);
+			delay(5);
 		}
 		else if (!image_process(&xpos, &area, &width)) {
 			//No ball
