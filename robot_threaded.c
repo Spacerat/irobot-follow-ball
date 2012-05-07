@@ -34,7 +34,7 @@ void roombath_read_bumps(unsigned char * l, unsigned char * r) {
 	rightBump = r;
 	next_command = ROOMBA_SENSORS;
 	pthread_mutex_unlock(&command_mutex);
-	while(bumpsRead) {}
+	while(bumpsRead && run_thread) {}
 }
 
 void roombath_thread_end() {
@@ -48,7 +48,7 @@ void roombath_thread_end() {
 void * roomba_thread_func(void * ptr) {
 	run_thread = 1;
 	while (run_thread) {
-	pthread_mutex_lock(&command_mutex);
+		pthread_mutex_lock(&command_mutex);
 		switch (next_command) {
 			case ROOMBA_DRIVE_DIRECT:
 				roomba_direct_drive(leftSpeed, rightSpeed);
