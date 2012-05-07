@@ -16,8 +16,8 @@ It's also a nice way to remote-control the robot.
 #include "vision.h"
 #include "delay.h"
 
-#define SCALE 5
-
+#define SCALE 500.f
+#define AREA_SCALE 500.f
 volatile int run = 1;
 
 
@@ -64,7 +64,7 @@ void * control_thread_func(void * ptr) {
 			//Ball found
 			centre = width / 2.0f;
 			diff = 2.0f*(xpos - centre)/width;			
-			offset = 1.0f/area;
+			offset = AREA_SCALE/area;
 			l_speed = offset + SCALE*diff;
 			r_speed = offset - SCALE*diff;
 
