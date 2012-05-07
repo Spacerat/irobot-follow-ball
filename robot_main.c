@@ -61,6 +61,9 @@ void * control_thread_func(void * ptr) {
 			}
 		}
 		else {
+			if (ballfound == 0) {
+				printf("Ball found!\n");
+			}
 			//Ball found
 			ballfound = 1;
 			roombath_direct_drive(100,100);
