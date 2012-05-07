@@ -52,10 +52,10 @@ void * control_thread_func(void * ptr) {
 	
 	while (run) {
 		vision_getframe();
-		if (image_process(&xpos, &area, &width)) {
+		if (!image_process(&xpos, &area, &width)) {
 			//No ball
 			if (ballfound) {
-				roombath_direct_drive(l_speed, r_speed);
+				roombath_direct_drive(500, 100);
 				printf("Ball lost.\n");
 				ballfound = 0;
 			}
@@ -63,7 +63,7 @@ void * control_thread_func(void * ptr) {
 		else {
 			//Ball found
 			ballfound = 1;
-			roombath_direct_drive(100,100);
+			roombath_direct_drive(l_speed,r_speed);
 
 		}
 		
