@@ -92,8 +92,8 @@ void * control_thread_func(void * ptr) {
 			//Ball found
 			centre = width / 2.0f;
 			diff = 2.0f*(xpos - centre)/width;	
-			area /= 10000;
-			distance = DIST_SCALE*(1/(area*area));
+			area /= 10000.f;
+			distance = DIST_SCALE*(1.f/(area*area));
 			
 			l_speed = distance + DIFF_SCALE*diff;
 			r_speed = distance - DIFF_SCALE*diff;
