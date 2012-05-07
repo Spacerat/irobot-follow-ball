@@ -78,6 +78,8 @@ void * control_thread_func(void * ptr) {
 
 int main()
 {
+	roombath_init();
+
 	signal(SIGQUIT, shutdown);
 	signal(SIGINT, shutdown);
 	
@@ -96,6 +98,8 @@ int main()
 	pthread_join( stdio_thread, NULL);
 	pthread_join( roomba_thread, NULL);
 	pthread_join( control_thread, NULL);
+
+	roombath_free();
 
 	return 0;
 }
