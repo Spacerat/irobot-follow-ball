@@ -82,7 +82,7 @@ int main()
 	pthread_t stdio_thread, roomba_thread, control_thread;
 	
 	vision_init();
-	
+	readCalibration("calibration.txt");
 	pthread_create( &stdio_thread, NULL, &stdio_thread_func, NULL);
 	pthread_create( &roomba_thread, NULL, &roomba_thread_func, NULL);
 	pthread_create( &control_thread, NULL, &control_thread_func, NULL);
