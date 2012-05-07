@@ -18,6 +18,11 @@ MyCameraWindow::MyCameraWindow(CvCapture * cam, QWidget * parent) : QWidget(pare
 void QOpenCVWidget::mousePressEvent(QMouseEvent * event) {
 	printf("%f\n", calibrate(event->x(), event->y()));
 	writeCalibration("calibration.txt");
+	int xpos, area, width;
+	area = 0;
+	image_process(&xpos, &area, &width);
+	printf("Position: %f\nArea: %d\n", (float)xpos/(float)width, area);
+
 }
 
 void MyCameraWindow::timerEvent(QTimerEvent *) {

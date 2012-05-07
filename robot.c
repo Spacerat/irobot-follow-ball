@@ -123,3 +123,13 @@ int roomba_led(unsigned char play, unsigned char advance, unsigned char colour, 
 	if (roomba_write(intensity) == -1) return -1;
 	return 0;
 }
+
+int roomba_read_bumps(unsigned char * left_bump, unsigned char * right_bump)
+{
+	unsigned char sensorPacket[10];
+	if (roomba_write(ROOMBA_SENSORS) == -1) return -1;
+	if (roomba_write(1) == -1) return -1;
+	if (roomba_read(sensorPacket, 10) == -1) return -1;
+	*left_bump  = (sensorPacket[0] & 2) ? 1 : 0;
+	*right_bump = (sensorPacket[0] & 1) ? 1 : 0;
+}
