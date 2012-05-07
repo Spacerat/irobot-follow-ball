@@ -8,9 +8,9 @@ static int rightSpeed;
 static int run_thread;
 
 void roombath_direct_drive(int l, int r) {
-	next_command = ROOMBA_DRIVE_DIRECT;
 	leftSpeed = l;
 	rightSpeed = r;
+	next_command = ROOMBA_DRIVE_DIRECT;
 }
 
 void roombath_thread_end() {
@@ -25,6 +25,7 @@ void * roomba_thread_func(void * ptr) {
 		switch (next_command) {
 			case ROOMBA_DRIVE_DIRECT:
 				roomba_direct_drive(leftSpeed, rightSpeed);
+				printf("Driving l=%d, r=%d\n", leftSpeed, rightSpeed);
 				break;
 			case ROOMBA_END:
 				roomba_direct_drive(0, 0);

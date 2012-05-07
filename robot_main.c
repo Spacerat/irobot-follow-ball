@@ -14,6 +14,7 @@ It's also a nice way to remote-control the robot.
 #include "robot_threaded.h"
 #include "robot.h"
 #include "vision.h"
+#include "delay.h"
 
 #define SCALE 5
 
@@ -71,7 +72,7 @@ void * control_thread_func(void * ptr) {
 			roombath_direct_drive(l_speed,r_speed);
 
 		}
-		
+		delay(100);
 	}
 }
 
