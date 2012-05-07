@@ -44,7 +44,7 @@ void * control_thread_func(void * ptr) {
 	
 	int xpos, area, width, l_speed, r_speed;
 	float diff;
-	float offset, centre;
+	float offset, centre, distance;
 	roombath_direct_drive(500, 100);
 
 	unsigned char l_bump, r_bump;
