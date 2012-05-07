@@ -164,7 +164,7 @@ int image_process(int * xpos, int * area, int * width) {
 			unsigned char * green = pixel_data + 1;
 			unsigned char * red   = pixel_data + 2;
 
-			if (original_test_func(blue, green, red) {
+			if (original_test_func(blue, green, red)) {
 				*red = 255;
 				*area = *area + 1;
 				moment = moment + x; 
