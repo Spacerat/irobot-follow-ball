@@ -172,8 +172,8 @@ int image_process(int * xpos, int * area, int * width) {
 			* blue_pixel = 255;
 			blue_pixel = blue_pixel + c*w;
 		}
-		return 0;
+		return 1;
 	}
-	return 1;
+	return 0;
 }
 
