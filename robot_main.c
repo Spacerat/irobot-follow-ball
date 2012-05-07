@@ -16,7 +16,7 @@ It's also a nice way to remote-control the robot.
 #include "vision.h"
 #include "delay.h"
 
-#define SCALE 500.f
+#define DIFF_SCALE 500.f
 #define DIST_SCALE 500.f
 volatile int run = 1;
 
