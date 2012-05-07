@@ -14,6 +14,7 @@ It's also a nice way to remote-control the robot.
 #include "robot_threaded.h"
 #include "robot.h"
 #include "vision.h"
+#include "delay.h"
 
 #define SCALE 5
 
@@ -44,12 +45,6 @@ void * control_thread_func(void * ptr) {
 	int xpos, area, width, l_speed, r_speed;
 	float diff;
 	float offset, centre;
-	centre = width / 2.0f;
-	diff = 2.0f*(xpos - centre)/width;			
-	offset = 1.0f/area;
-	l_speed = offset + SCALE*diff;
-	r_speed = offset - SCALE*diff;
-	
 	roombath_direct_drive(500, 100);
 
 	while (run) {
@@ -67,11 +62,17 @@ void * control_thread_func(void * ptr) {
 				printf("Ball found!\n");
 			}
 			//Ball found
+			centre = width / 2.0f;
+			diff = 2.0f*(xpos - centre)/width;			
+			offset = 1.0f/area;
+			l_speed = offset + SCALE*diff;
+			r_speed = offset - SCALE*diff;
+
 			ballfound = 1;
 			roombath_direct_drive(l_speed,r_speed);
 
 		}
-		
+		delay(100);
 	}
 }
 
