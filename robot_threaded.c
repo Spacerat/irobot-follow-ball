@@ -67,4 +67,5 @@ void * roomba_thread_func(void * ptr) {
 		next_command = ROOMBA_CONTINUE;
 		pthread_mutex_unlock(&command_mutex);
 	}
+	bumpsRead = 0;
 }
