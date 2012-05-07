@@ -47,10 +47,17 @@ void * control_thread_func(void * ptr) {
 	float offset, centre;
 	roombath_direct_drive(500, 100);
 
+	unsigned char l_bump, r_bump;
+
 	while (run) {
 		vision_getframe();
 		area = 0;
-		if (!image_process(&xpos, &area, &width)) {
+		roombath_read_bumps(&l_bump, &r_bump);
+		if (l_bump || r_bump) {
+			//Hit a wall
+			printf("Hit a wall.\n");
+		}
+		else if (!image_process(&xpos, &area, &width)) {
 			//No ball
 			if (ballfound) {
 				roombath_direct_drive(500, 100);
@@ -71,7 +78,6 @@ void * control_thread_func(void * ptr) {
 
 			ballfound = 1;
 			roombath_direct_drive(l_speed,r_speed);
-
 		}
 		delay(10);
 	}
@@ -84,12 +90,12 @@ int main()
 	signal(SIGQUIT, shutdown);
 	signal(SIGINT, shutdown);
 	
-	if(roomba_open(ROOMBA_MODE_SAFE) == -1) {
+	if(roomba_open(ROOMBA_MODE_FULL) == -1) {
 		fprintf(stderr, "Open failed. Check the USB cable!\nHave you remembered to run $sudo chmod ugo+rw /dev/ttyUSB0 ?\n");
 		return 1;
 	}
 	pthread_t stdio_thread, roomba_thread, control_thread;
-	readCalibration("calibration.txt");	
+	readCalibration("calibration.txt");
 	vision_init();
 	
 	pthread_create( &stdio_thread, NULL, &stdio_thread_func, NULL);

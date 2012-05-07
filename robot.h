@@ -44,6 +44,7 @@ int roomba_write(unsigned char outbyte);
 int roomba_drive(short velocity, short radius);
 int roomba_direct_drive(short left_velocity, short right_velocity);
 int roomba_led(unsigned char play, unsigned char advance, unsigned char colour, unsigned char intensity);
+int roomba_read_bumps(unsigned char * left_bump, unsigned char * right_bump);
 
 #endif
 
