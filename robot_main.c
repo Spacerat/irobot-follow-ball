@@ -55,6 +55,7 @@ void * control_thread_func(void * ptr) {
 		roombath_read_bumps(&l_bump, &r_bump);
 		if (l_bump || r_bump) {
 			//Hit a wall
+			roombath_direct_drive(0, 0);
 			printf("Hit a wall.\n");
 		}
 		else if (!image_process(&xpos, &area, &width)) {
