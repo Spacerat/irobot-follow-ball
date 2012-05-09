@@ -59,11 +59,16 @@ void MyCameraWindow::timerEvent(QTimerEvent *) {
 	updateUIImage();
 	
 	char text[128] = {0};
-	int x, area, l_speed, r_speed;
+	int x, area, l_speed, r_speed, ballfound;
 	float distance;
 
-	vision_ui_get_values(&x, &area, &l_speed, &r_speed, &distance);
-	sprintf(text, "X=%d Area=%d L.Speed=%d R.Speed=%d Distance=%.2f", x, area, l_speed, r_speed, distance);
+	vision_ui_get_values(&x, &area, &l_speed, &r_speed, &distance, &ballfound);
+
+	if(ballfound)
+		sprintf(text, "Ball found at: X=%d Area=%d Distance=%.2f   Motor speeds: L.Speed=%d R.Speed=%d", x, area, l_speed, r_speed, distance);
+	else
+		sprintf(text, "Ball not found: Area=%d");
+
 	labelPosition->setText(text);
 
 	vision_ui_unlock_image();
