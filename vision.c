@@ -7,12 +7,12 @@
 #define BLUEGREEN_MUL 3
 #define AREA_MIN 1000
 
-static float hueMin    = 0.f;
-static float hueMax    = 0.f;
-static float brightMin = 0.f;
-static float brightMax = 1.f;
-static float satMin    = 0.f;
-static float satMax    = 0.f;
+static float hueCal      = -0.2f;
+static float hueRange    = 0.2f;
+static float brightCal   = 0.5f;
+static float brightRange = 0.5f;
+static float satCal      = -0.2f;
+static float satRange    = 0.2f;
 
 #define min(x, y) ((x) < (y) ? (x) : (y))
 
@@ -81,14 +81,8 @@ float calibrate(int xpos, int ypos) {
 		}
 	}
 	
-	float hue = totalHue / 100.f;
-	float sat = totalSat / 100.f;
-	
-	hueMin = hue - 0.2f;
-	hueMax = hue + 0.2f;
-	
-	satMin = sat - 0.2f;
-	satMax = sat + 0.2f;
+	hueCal = totalHue / 100.f;
+	satCal = totalSat / 100.f;
 	
 	return hue;
 }
@@ -99,10 +93,8 @@ Reads the calibration values from the given file.
 int readCalibration(const char * fileName) {
 	FILE * f = fopen(fileName, "rb");
 	if(!f) return -1;
-	fscanf(f, "%f", &hueMin);
-	fscanf(f, "%f", &hueMax);
-	fscanf(f, "%f", &satMin);
-	fscanf(f, "%f", &satMax);
+	fscanf(f, "%f", &hueCal);
+	fscanf(f, "%f", &satCal);
 	fclose(f);
 	return 0;
 }
@@ -113,12 +105,26 @@ Writes the calibration values from the given file.
 int writeCalibration(const char * fileName) {
 	FILE * f = fopen(fileName, "wb");
 	if(!f) return -1;
-	fprintf(f, "%f", hueMin);
-	fprintf(f, "%f", hueMax);
-	fprintf(f, "%f", satMin);
-	fprintf(f, "%f", satMax);
+	fprintf(f, "%f", hueCal);
+	fprintf(f, "%f", hueCal);
 	fclose(f);
 	return 0;
+}
+
+void calibrationSetHue(float hue) {
+	hueCal = hue;
+}
+
+void calibrationSetSat(float sat) {
+	satCal = sat;
+}
+
+float calibrationGetHue() {
+	return hueCal;
+}
+
+float calibrationGetSat() {
+	return satCal;
 }
 
 int hue_test_func(unsigned char * blue, unsigned char * green, unsigned char * red) {
@@ -130,9 +136,9 @@ int hue_test_func(unsigned char * blue, unsigned char * green, unsigned char * r
 	float bright = (0.2126f * fred) + (0.7152f * fgreen) + (0.0722f * fblue);
 	float sat = 1.f - (3.f * min(min(fred, fgreen), fblue) / (fred + fgreen + fblue));
 
-	if (hue    > hueMin    && hue    < hueMax &&
-		bright > brightMin && bright < brightMax &&
-		sat    > satMin    && sat    < satMax) {
+	if (hue    > hueCal-hueRange       && hue    < hueCal+hueRange &&
+	    bright > brightCal-brightRange && bright < brightCal+brightRange &&
+	    sat    > satCal-satRange       && sat    < satCal+satRange) {
 		return 1;
 	}
 	else return 0;

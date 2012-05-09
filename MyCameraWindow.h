@@ -36,6 +36,10 @@ class MyCameraWindow : public QWidget
  
 	protected:
 		void timerEvent(QTimerEvent*);
+	
+	public slots:
+		void hueValueChanged(int value);
+		void satValueChanged(int value);
 };
 
 

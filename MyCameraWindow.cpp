@@ -20,16 +20,29 @@ MyCameraWindow::MyCameraWindow(void * cam, QWidget * parent) : QWidget(parent) {
 	cvwidget    = new QOpenCVWidget(this);
 	labelHue    = new QLabel("Hue: ", this);
 	sliderHue   = new QSlider(Qt::Horizontal, this);
-	labelHueVal = new QLabel("360\xb0");
+	labelHueVal = new QLabel("0.00\xb0");
 	labelSat    = new QLabel("Saturation: ", this);
 	sliderSat   = new QSlider(Qt::Horizontal, this);
-	labelSatVal = new QLabel("100%");
+	labelSatVal = new QLabel("100.00%");
 	labelPosition = new QLabel("X=0 Area=0 Left Speed=0 Right Speed=0 Distance=0");
 
 	QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
 	sliderSat->setSizePolicy(sizePolicy);
 	sliderHue->setSizePolicy(sizePolicy);
+
+	sliderHue->setMinimum(-50000);
+	sliderHue->setMaximum(50000);
+	sliderSat->setMaximum(100000);
+	sliderSat->setValue(100000);
+
+#ifndef NO_VISION
+	sliderHue->setValue((int)(calibrationGetHue() / M_PI * 50000.f));
+	sliderSat->setValue((int)(calibrationGetSat() / 100000.f));
+#endif
+	
+	QObject::connect(sliderHue, SIGNAL(valueChanged(int)), this, SLOT(hueValueChanged(int)));
+	QObject::connect(sliderSat, SIGNAL(valueChanged(int)), this, SLOT(satValueChanged(int)));
 
 	layout->addWidget(cvwidget, 0, 0, 1, 3);
 	layout->addWidget(labelHue, 1, 0, 1, 1);
@@ -46,6 +59,26 @@ MyCameraWindow::MyCameraWindow(void * cam, QWidget * parent) : QWidget(parent) {
 	setLayout(layout);
 	
 	startTimer(100);
+}
+
+void MyCameraWindow::hueValueChanged(int value) {
+	char text[128] = {0};
+	sprintf(text, "%.2f\xb0", (float)value / 50000.f * 180.f);
+	labelHueVal->setText(text);
+#ifndef NO_VISION
+	calibrationSetHue((float)value / 50000.f * M_PI);
+	writeCalibration("calibration.txt");
+#endif
+}
+
+void MyCameraWindow::satValueChanged(int value) {
+	char text[128] = {0};
+	sprintf(text, "%.2f%%", (float)value / 1000.f);
+	labelSatVal->setText(text);
+#ifndef NO_VISION
+	calibrationSetSat((float)value / 100000.f);
+	writeCalibration("calibration.txt");
+#endif
 }
 
 void QOpenCVWidget::mousePressEvent(QMouseEvent * event) {

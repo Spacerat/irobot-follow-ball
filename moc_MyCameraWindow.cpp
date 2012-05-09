@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'MyCameraWindow.h'
 **
-** Created: Wed May 9 19:10:19 2012
+** Created: Wed May 9 19:35:03 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,18 +23,23 @@ static const uint qt_meta_data_MyCameraWindow[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       0,    0, // methods
+       2,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
        0,       // signalCount
 
+ // slots: signature, parameters, type, tag, flags
+      22,   16,   15,   15, 0x0a,
+      43,   16,   15,   15, 0x0a,
+
        0        // eod
 };
 
 static const char qt_meta_stringdata_MyCameraWindow[] = {
-    "MyCameraWindow\0"
+    "MyCameraWindow\0\0value\0hueValueChanged(int)\0"
+    "satValueChanged(int)\0"
 };
 
 const QMetaObject MyCameraWindow::staticMetaObject = {
@@ -64,6 +69,14 @@ int MyCameraWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     _id = QWidget::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: hueValueChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 1: satValueChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
+        default: ;
+        }
+        _id -= 2;
+    }
     return _id;
 }
 QT_END_MOC_NAMESPACE
