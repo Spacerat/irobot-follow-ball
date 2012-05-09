@@ -12,26 +12,39 @@ MyCameraWindow::MyCameraWindow(CvCapture * cam, QWidget * parent) : QWidget(pare
 #else
 MyCameraWindow::MyCameraWindow(void * cam, QWidget * parent) : QWidget(parent) {
 #endif
+	
+	resize(500, 400);
+
 	QGridLayout * layout = new QGridLayout(this);
 
-	cvwidget  = new QOpenCVWidget(this);
-	labelHue  = new QLabel("Hue: ", this);
-	sliderHue = new QSlider(Qt::Horizontal, this);
+	cvwidget    = new QOpenCVWidget(this);
+	labelHue    = new QLabel("Hue: ", this);
+	sliderHue   = new QSlider(Qt::Horizontal, this);
+	labelHueVal = new QLabel("360\xb0");
+	labelSat    = new QLabel("Saturation: ", this);
+	sliderSat   = new QSlider(Qt::Horizontal, this);
+	labelSatVal = new QLabel("100%");
+	labelPosition = new QLabel("X=0 Area=0 Left Speed=0 Right Speed=0 Distance=0");
 
 	QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-	labelHue->setSizePolicy(sizePolicy);
+	sliderSat->setSizePolicy(sizePolicy);
 	sliderHue->setSizePolicy(sizePolicy);
 
-	layout->addWidget(cvwidget, 0, 0, 1, 2, Qt::AlignLeft | Qt::AlignTop);
-	layout->addWidget(labelHue, 1, 0, 1, 1, Qt::AlignLeft | Qt::AlignVCenter);
-	layout->addWidget(sliderHue, 1, 1, 1, 1, Qt::AlignLeft | Qt::AlignVCenter);
+	layout->addWidget(cvwidget, 0, 0, 1, 3);
+	layout->addWidget(labelHue, 1, 0, 1, 1);
+	layout->addWidget(sliderHue, 1, 1, 1, 1);
+	layout->addWidget(labelHueVal, 1, 2, 1, 1);
+	layout->addWidget(labelSat, 2, 0, 1, 1);
+	layout->addWidget(sliderSat, 2, 1, 1, 1);
+	layout->addWidget(labelSatVal, 2, 2, 1, 1);
+	layout->addWidget(labelPosition, 3, 0, 1, 3);
 
 	layout->setRowStretch(0, 1);
 	layout->setColumnStretch(1, 1);
 
 	setLayout(layout);
-	resize(500, 400);
+	
 	startTimer(100);
 }
 

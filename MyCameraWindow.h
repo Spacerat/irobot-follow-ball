@@ -20,10 +20,12 @@ class MyCameraWindow : public QWidget
 		CvCapture     * camera;
 #endif
 		QLabel        * labelHue;
-		QLabel        * labelSat; 
+		QLabel        * labelHueVal;
+		QLabel        * labelSat;
+		QLabel        * labelSatVal;
 		QSlider       * sliderHue;
 		QSlider       * sliderSat;
-		QLabel        * labelPos;
+		QLabel        * labelPosition;
 
         public:
 #ifndef NO_VISION

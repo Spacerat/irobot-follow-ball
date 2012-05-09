@@ -17,7 +17,7 @@ vision_test: vision_test.cpp
 	qmake -o qmakefile vision_test.pro
 	make -f qmakefile
 	
-ui_test: vision_test.cpp
+ui_test: vision_test.cpp MyCameraWindow.cpp QOpenCVWidget.cpp
 	qmake -o qmakefile ui_test.pro
 	make -f qmakefile
 
