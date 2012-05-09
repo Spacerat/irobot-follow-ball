@@ -10,6 +10,8 @@ void * vision_ui_thread_func(void * ptr);
 void vision_ui_quit();
 void vision_ui_lock_image();
 void vision_ui_unlock_image();
+void vision_ui_update_values(int xpos, int area, int l_speed, int r_speed, float distance);
+void vision_ui_get_values(int * xpos, int * area, int * l_speed, int * r_speed, float * distance);
 
 #ifdef __cplusplus
 }

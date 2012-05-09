@@ -44,7 +44,7 @@ void * control_thread_func(void * ptr) {
 	static int ballfound = 0;
 	
 	int xpos, area, width, l_speed, r_speed;
-	float diff;
+	float diff, farea;
 	float offset, centre, distance;
 	roombath_direct_drive(500, 100);
 
@@ -92,11 +92,12 @@ void * control_thread_func(void * ptr) {
 				printf("Ball found!\n");
 			}
 			//Ball found
+			farea = (float)area;
 			centre = width / 2.0f;
-			diff = 2.0f*(xpos - centre)/width;	
-			area -= 700;
-			area = area/10000;
-			distance = DIST_SCALE*(1.f/(area*area));
+			diff = 2.0f*(xpos - centre)/width;
+			farea -= 700.f;
+			farea = farea/(10000.f-700.f);
+			distance = DIST_SCALE*(1.f/(farea*farea));
 			
 			l_speed = DIFF_SCALE*diff;
 			r_speed = -DIFF_SCALE*diff;
@@ -104,6 +105,7 @@ void * control_thread_func(void * ptr) {
 			ballfound = 1;
 			//roombath_direct_drive(l_speed,r_speed);
 		}
+		vision_ui_update_values(xpos, area, l_speed, r_speed, distance);
 		vision_ui_unlock_image();
 		delay(10);
 	}
