@@ -7,12 +7,10 @@
 #define BLUEGREEN_MUL 3
 #define AREA_MIN 1000
 
-static float hueCal      = -0.2f;
-static float hueRange    = 0.2f;
-static float brightCal   = 0.5f;
-static float brightRange = 0.5f;
-static float satCal      = -0.2f;
-static float satRange    = 0.2f;
+static int hueCal   = 0;
+static int hueRange = 20;
+static int satCal   = -51;
+static int satRange = 51;
 
 #define min(x, y) ((x) < (y) ? (x) : (y))
 
@@ -100,9 +98,12 @@ Reads the calibration values from the given file.
 int readCalibration(const char * fileName) {
 	FILE * f = fopen(fileName, "rb");
 	if(!f) return -1;
-	fscanf(f, "%f", &hueCal);
-	fscanf(f, "%f", &satCal);
+	float hue, sat;
+	fscanf(f, "%f", &hue);
+	fscanf(f, "%f", &sat);
 	fclose(f);
+	calibrationSetHue(hue);
+	calibrationSetSat(sat);
 	return 0;
 }
 
@@ -112,39 +113,61 @@ Writes the calibration values from the given file.
 int writeCalibration(const char * fileName) {
 	FILE * f = fopen(fileName, "wb");
 	if(!f) return -1;
-	fprintf(f, "%f\n", hueCal);
-	fprintf(f, "%f\n", satCal);
+	fprintf(f, "%f\n", calibrationGetHue());
+	fprintf(f, "%f\n", calibrationGetSat());
 	fclose(f);
 	return 0;
 }
 
 void calibrationSetHue(float hue) {
-	hueCal = hue;
+	hueCal = (int)(hue / M_PI * 180);
 }
 
 void calibrationSetSat(float sat) {
-	satCal = sat;
+	satCal = (int)(sat * 255);
 }
 
 float calibrationGetHue() {
-	return hueCal;
+	return (float)hueCal / 180.f * M_PI;
 }
 
 float calibrationGetSat() {
-	return satCal;
+	return (float)satCal / 255;
 }
 
-int hue_test_func(unsigned char * blue, unsigned char * green, unsigned char * red) {
-	float fblue  = (float)*blue  / 255.f;
-	float fgreen = (float)*green / 255.f;
-	float fred   = (float)*red   / 255.f;
+int hue_test_func(unsigned int blue, unsigned int green, unsigned int red) {
 
-	float hue = atan2(sqrt(3) * (fgreen - fblue), 2.f * fred - fgreen - fblue);
-	float bright = (0.2126f * fred) + (0.7152f * fgreen) + (0.0722f * fblue);
-	float sat = 1.f - (3.f * min(min(fred, fgreen), fblue) / (fred + fgreen + fblue));
+	int hue;
+	int rg = red - green;
+	int rb = red - blue;
+	int gb = green - blue;
+	if (red >= green && red >= blue) { /* between -60 and 60 */
+		if (green > blue) { /* between 0 and 60 */
+			hue = 60 * gb / rb;
+		}
+		else { /* between -60 and 0 */
+			hue = 60 * -gb / rg;
+		}
+	}
+	else if (green >= red && green >= blue) { /* between 60 and 180 */
+		if (red > blue) { /* between 60 and 120 */
+			hue = 120 + 60 * rb / gb;
+		}
+		else { /* between 120 and 180 */
+			hue = 120 + 60 * rb / rg;
+		}
+	}
+	else { /* between -180 and -60 */
+		if (red > green) { /* between -120 and -60 */
+			hue = -120 + 60 * rg / -gb;
+		}
+		else { /* between -180 and -120 */
+			hue = -120 + 60 * rg / rb;
+		}
+	}
+	int sat = 255 - (3 * min(min(red, green), blue) / (red + green + blue));
 
 	if (hue    > hueCal-hueRange       && hue    < hueCal+hueRange &&
-	    bright > brightCal-brightRange && bright < brightCal+brightRange &&
 	    sat    > satCal-satRange       && sat    < satCal+satRange) {
 		return 1;
 	}
@@ -177,6 +200,7 @@ int image_process(int * xpos, int * area, int * width) {
 			unsigned char * green = pixel_data + 1;
 			unsigned char * red   = pixel_data + 2;
 
+			//if (hue_test_func(*blue, *green, *red)) {
 			if (original_test_func(blue, green, red)) {
 				*red = 255;
 				*area = *area + 1;
