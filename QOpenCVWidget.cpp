@@ -23,7 +23,7 @@ QOpenCVWidget::~QOpenCVWidget(void) {
     
 }
 
-
+#ifndef NO_VISION
 void QOpenCVWidget::putImage(IplImage *cvimage) {
     int cvIndex, cvLineStart;
     // switch between bit depths
@@ -62,4 +62,5 @@ void QOpenCVWidget::putImage(IplImage *cvimage) {
     }
     imagelabel->setPixmap(QPixmap::fromImage(image));    
 }
+#endif
 

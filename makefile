@@ -17,6 +17,10 @@ vision_test: vision_test.cpp
 	qmake -o qmakefile vision_test.pro
 	make -f qmakefile
 	
+ui_test: vision_test.cpp
+	qmake -o qmakefile ui_test.pro
+	make -f qmakefile
+
 robot_threaded.o: robot_threaded.c robot.o
 	gcc -c robot_threaded.c robot.o
 	

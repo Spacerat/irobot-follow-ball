@@ -2,7 +2,9 @@
 #ifndef QOPENCVWIDGET_H
 #define QOPENCVWIDGET_H
 
+#ifndef NO_VISION
 #include <opencv/cv.h>
+#endif
 #include <QPixmap>
 #include <QLabel>
 #include <QWidget>
@@ -19,7 +21,9 @@ class QOpenCVWidget : public QWidget {
     public:
         QOpenCVWidget(QWidget *parent = 0);
         ~QOpenCVWidget(void);
+#ifndef NO_VISION
         void putImage(IplImage *);
+#endif
        	
         void mousePressEvent(QMouseEvent * event);
 }; 
