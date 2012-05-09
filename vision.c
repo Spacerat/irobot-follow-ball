@@ -84,7 +84,7 @@ float calibrate(int xpos, int ypos) {
 	hueCal = totalHue / 100.f;
 	satCal = totalSat / 100.f;
 	
-	return hue;
+	return hueCal;
 }
 
 /*

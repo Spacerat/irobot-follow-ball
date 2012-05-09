@@ -33,10 +33,11 @@ class MyCameraWindow : public QWidget
 #else
 		MyCameraWindow(void * cam, QWidget * parent = 0);
 #endif        
+		void updateUICalibration(float hue, float sat);	
  
 	protected:
 		void timerEvent(QTimerEvent*);
-	
+
 	public slots:
 		void hueValueChanged(int value);
 		void satValueChanged(int value);

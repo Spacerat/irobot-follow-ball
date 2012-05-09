@@ -34,12 +34,8 @@ MyCameraWindow::MyCameraWindow(void * cam, QWidget * parent) : QWidget(parent) {
 	sliderHue->setMinimum(-50000);
 	sliderHue->setMaximum(50000);
 	sliderSat->setMaximum(100000);
+	sliderSat->setMinimum(0);
 	sliderSat->setValue(100000);
-
-#ifndef NO_VISION
-	sliderHue->setValue((int)(calibrationGetHue() / M_PI * 50000.f));
-	sliderSat->setValue((int)(calibrationGetSat() / 100000.f));
-#endif
 	
 	QObject::connect(sliderHue, SIGNAL(valueChanged(int)), this, SLOT(hueValueChanged(int)));
 	QObject::connect(sliderSat, SIGNAL(valueChanged(int)), this, SLOT(satValueChanged(int)));
@@ -55,10 +51,21 @@ MyCameraWindow::MyCameraWindow(void * cam, QWidget * parent) : QWidget(parent) {
 
 	layout->setRowStretch(0, 1);
 	layout->setColumnStretch(1, 1);
+	
+#ifndef NO_VISION
+	updateUICalibration(calibrationGetHue(), calibrationGetSat());
+#endif
 
 	setLayout(layout);
 	
 	startTimer(100);
+}
+
+void MyCameraWindow::updateUICalibration(float hue, float sat) {
+	sliderHue->setValue((int)(hue / M_PI * 50000.f));
+	sliderSat->setValue((int)(sat * 100000.f));
+	hueValueChanged((int)(hue / M_PI * 50000.f));
+	satValueChanged((int)(sat * 100000.f));
 }
 
 void MyCameraWindow::hueValueChanged(int value) {
@@ -89,6 +96,7 @@ void QOpenCVWidget::mousePressEvent(QMouseEvent * event) {
 	area = 0;
 	image_process(&xpos, &area, &width);
 	printf("Position: %f\nArea: %d\n", (float)xpos/(float)width, area);
+	((MyCameraWindow *)parent())->updateUICalibration(calibrationGetHue(), calibrationGetSat());
 #endif
 }
 
