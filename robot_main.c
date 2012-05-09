@@ -103,6 +103,7 @@ void * control_thread_func(void * ptr) {
 			ballfound = 1;
 			roombath_direct_drive(l_speed,r_speed);
 		}
+		vision_ui_update();
 		delay(10);
 	}
 }
@@ -117,8 +118,8 @@ int main(int argc, char ** argv)
 	
 	//if(roomba_open(ROOMBA_MODE_FULL) == -1) {
 	//	fprintf(stderr, "Open failed. Check the USB cable!\nHave you remembered to run $sudo chmod ugo+rw /dev/ttyUSB0 ?\n");
-//		return 1;
-//	}
+	//	return 1;
+	//}
 	pthread_t stdio_thread, roomba_thread, control_thread, vision_ui_thread;
 	readCalibration("calibration.txt");
 	vision_init();

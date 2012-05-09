@@ -27,3 +27,9 @@ extern "C" void * vision_ui_thread_func(void * ptr) {
 extern "C" void vision_ui_quit() {
 	mainWin->close();
 }
+
+extern "C" void vision_ui_update() {
+	plImage * image = vision_getimage();
+        if (image) cvwidget->putImage(image);
+}
+
