@@ -24,7 +24,7 @@ class MyCameraWindow : public QWidget
 		QLabel        * labelPosition;
 
 	protected:
-		void customEvent(QEvent* e);
+		void timerEvent(QTimerEvent *);
 
         public:
 		MyCameraWindow(CvCapture * cam, QWidget * parent = 0);

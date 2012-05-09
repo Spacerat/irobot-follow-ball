@@ -8,7 +8,8 @@ extern "C" {
 void vision_ui_init(int argc, char ** argv);
 void * vision_ui_thread_func(void * ptr);
 void vision_ui_quit();
-void vision_ui_update();
+void vision_ui_lock_image();
+void vision_ui_unlock_image();
 
 #ifdef __cplusplus
 }

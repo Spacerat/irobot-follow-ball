@@ -51,6 +51,7 @@ void * control_thread_func(void * ptr) {
 	unsigned char l_bump, r_bump;
 
 	while (run) {
+		vision_ui_lock_image();
 		vision_getframe();
 		area = 0;
 		roombath_read_bumps(&l_bump, &r_bump);
@@ -103,7 +104,7 @@ void * control_thread_func(void * ptr) {
 			ballfound = 1;
 			//roombath_direct_drive(l_speed,r_speed);
 		}
-		vision_ui_update();
+		vision_ui_unlock_image();
 		delay(10);
 	}
 }

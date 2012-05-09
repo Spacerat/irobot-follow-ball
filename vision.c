@@ -53,6 +53,9 @@ CvCapture * vision_getcamera() {
 	return camera;
 }
 
+/*
+Returns the image last retrieved from the camera.
+*/
 IplImage * vision_getimage() {
 	return image;
 }

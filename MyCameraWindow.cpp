@@ -1,5 +1,6 @@
 #include "MyCameraWindow.h"
 #include "vision.h"
+#include "vision_ui.h"
 #include <QMouseEvent>
 #include <stdio.h>
 #include "QOpenCVWidget.h"
@@ -49,13 +50,17 @@ MyCameraWindow::MyCameraWindow(CvCapture * cam, QWidget * parent) : QWidget(pare
 	updateUICalibration(calibrationGetHue(), calibrationGetSat());
 
 	setLayout(layout);
+	
+	startTimer(50);
 }
 
-void MyCameraWindow::customEvent(QEvent* e)
+void MyCameraWindow::timerEvent(QTimerEvent*) {
 {
 	if(e->type() == (QEvent::Type)1001)
 	{
+		vision_ui_lock_image();
 		updateUIImage();
+		vision_ui_unlock_image();
 	}
 }
 
