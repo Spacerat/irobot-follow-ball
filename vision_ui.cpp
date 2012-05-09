@@ -29,7 +29,6 @@ extern "C" void vision_ui_quit() {
 }
 
 extern "C" void vision_ui_update() {
-	plImage * image = vision_getimage();
-        if (image) cvwidget->putImage(image);
+	mainWin->updateUIImage();
 }
 

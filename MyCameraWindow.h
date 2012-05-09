@@ -26,7 +26,8 @@ class MyCameraWindow : public QWidget
         public:
 		MyCameraWindow(CvCapture * cam, QWidget * parent = 0);
 		void updateUICalibration(float hue, float sat);	
- 
+		void updateUIImage();
+
 	public slots:
 		void hueValueChanged(int value);
 		void satValueChanged(int value);

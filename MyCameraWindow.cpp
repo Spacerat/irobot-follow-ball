@@ -51,6 +51,11 @@ MyCameraWindow::MyCameraWindow(CvCapture * cam, QWidget * parent) : QWidget(pare
 	setLayout(layout);
 }
 
+void MyCameraWindow::updateUIImage() {
+	IplImage * image = vision_getimage();
+        if (image) cvwidget->putImage(image);
+}
+
 void MyCameraWindow::updateUICalibration(float hue, float sat) {
 	sliderHue->setValue((int)(hue / M_PI * 50000.f));
 	sliderSat->setValue((int)(sat * 100000.f));
