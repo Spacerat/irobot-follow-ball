@@ -14,9 +14,9 @@ MyCameraWindow::MyCameraWindow(void * cam, QWidget * parent) : QWidget(parent) {
 #endif
 	QGridLayout * layout = new QGridLayout(this);
 
-	cvwidget  = new QOpenCVWidget(new QWidget(layout));
-	labelHue  = new QLabel("Hue: ", new QWidget(layout));
-	sliderHue = new QSlider(Qt::Horizontal, new QWidget(layout));
+	cvwidget  = new QOpenCVWidget(this);
+	labelHue  = new QLabel("Hue: ", this);
+	sliderHue = new QSlider(Qt::Horizontal, this);
 
 	QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
