@@ -53,6 +53,10 @@ CvCapture * vision_getcamera() {
 	return camera;
 }
 
+IplImage * vision_getimage() {
+	return image;
+}
+
 /*
 Calibrates the hue and saturation ranges to the pixel specified.
 */

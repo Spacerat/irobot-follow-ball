@@ -9,14 +9,21 @@
 #include "MyCameraWindow.h"
 #include "vision.h"
 
-void * vision_ui_thread_func(void * ptr) {
-	QApplication app(argc, argv);
-	MyCameraWindow * mainWin = new MyCameraWindow(vision_getcamera());
-	mainWin->setWindowTitle("Roomba Ball Follow");
-	mainWin->show();
-	app.exec();
+static MyCameraWindow * mainWin;
+static QApplication * app;
+
+extern "C" void vision_ui_init(int argc, char ** argv) {
+	app = new QApplication(argc, argv);
 }
 
-void vision_ui_quit() {
+extern "C" void * vision_ui_thread_func(void * ptr) {
+	mainWin = new MyCameraWindow(vision_getcamera());
+	mainWin->setWindowTitle("Roomba Ball Follow");
+	mainWin->show();
+	app->exec();
+	return 0;
+}
+
+extern "C" void vision_ui_quit() {
 	mainWin->close();
 }

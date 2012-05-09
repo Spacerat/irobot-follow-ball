@@ -58,7 +58,7 @@ MyCameraWindow::MyCameraWindow(void * cam, QWidget * parent) : QWidget(parent) {
 
 	setLayout(layout);
 	
-	startTimer(100);
+	startTimer(50);
 }
 
 void MyCameraWindow::updateUICalibration(float hue, float sat) {
@@ -102,10 +102,8 @@ void QOpenCVWidget::mousePressEvent(QMouseEvent * event) {
 
 void MyCameraWindow::timerEvent(QTimerEvent *) {
 #ifndef NO_VISION
-	IplImage * image = vision_getframe();
-	int xpos, area, width;
-	image_process(&xpos, &area, &width);
-	cvwidget->putImage(image);
+	IplImage * image = vision_getimage();
+	if (image) cvwidget->putImage(image);
 #endif
 }
 

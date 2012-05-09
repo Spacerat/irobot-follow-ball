@@ -107,31 +107,37 @@ void * control_thread_func(void * ptr) {
 	}
 }
 
-int main()
+int main(int argc, char ** argv)
 {
 	roombath_init();
+	vision_ui_init(argc, argv);
 
 	signal(SIGQUIT, shutdown);
 	signal(SIGINT, shutdown);
 	
-	if(roomba_open(ROOMBA_MODE_FULL) == -1) {
-		fprintf(stderr, "Open failed. Check the USB cable!\nHave you remembered to run $sudo chmod ugo+rw /dev/ttyUSB0 ?\n");
-		return 1;
-	}
+	//if(roomba_open(ROOMBA_MODE_FULL) == -1) {
+	//	fprintf(stderr, "Open failed. Check the USB cable!\nHave you remembered to run $sudo chmod ugo+rw /dev/ttyUSB0 ?\n");
+//		return 1;
+//	}
 	pthread_t stdio_thread, roomba_thread, control_thread, vision_ui_thread;
 	readCalibration("calibration.txt");
 	vision_init();
-	pthread_create( &stdio_thread, NULL, &stdio_thread_func, NULL);
-	pthread_create( &roomba_thread, NULL, &roomba_thread_func, NULL);
+	//pthread_create( &stdio_thread, NULL, &stdio_thread_func, NULL);
+	//pthread_create( &roomba_thread, NULL, &roomba_thread_func, NULL);
 	pthread_create( &control_thread, NULL, &control_thread_func, NULL);
-	pthread_create( &vision_ui_thread, NULL, &vision_ui_thread_func, NULL);
+	//pthread_create( &vision_ui_thread, NULL, &vision_ui_thread_func, NULL);
 	
-	pthread_join( vision_ui_thread, NULL);
-	pthread_join( stdio_thread, NULL);
-	pthread_join( roomba_thread, NULL);
+	vision_ui_thread_func(NULL);
+
+	shutdown(0);
+	
+	//pthread_join( vision_ui_thread, NULL);
+	//pthread_join( stdio_thread, NULL);
+	//pthread_join( roomba_thread, NULL);
 	pthread_join( control_thread, NULL);
 
 	roombath_free();
+	vision_ui_quit();
 
 	return 0;
 }
