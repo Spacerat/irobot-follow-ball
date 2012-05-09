@@ -17,8 +17,8 @@ It's also a nice way to remote-control the robot.
 #include "delay.h"
 #include "vision_ui.h"
 
-#define DIFF_SCALE 500.f
-#define DIST_SCALE 500.f
+#define DIFF_SCALE 50.f
+#define DIST_SCALE 1.f
 volatile int run = 1;
 
 
@@ -97,10 +97,10 @@ void * control_thread_func(void * ptr) {
 			diff = 2.0f*(xpos - centre)/width;
 			farea -= 700.f;
 			farea = farea/(10000.f-700.f);
-			distance = DIST_SCALE*(1.f/(farea*farea));
+			distance = 1.f/(farea*farea);
 			
-			l_speed = DIFF_SCALE*diff;
-			r_speed = -DIFF_SCALE*diff;
+			l_speed = DIST_SCALE*distance + DIFF_SCALE*diff;
+			r_speed = DIST_SCALE*distance - DIFF_SCALE*diff;
 
 			ballfound = 1;
 			//roombath_direct_drive(l_speed,r_speed);

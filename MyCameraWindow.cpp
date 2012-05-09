@@ -19,7 +19,7 @@ MyCameraWindow::MyCameraWindow(CvCapture * cam, QWidget * parent) : QWidget(pare
 	labelSat      = new QLabel("Saturation: ", this);
 	sliderSat     = new QSlider(Qt::Horizontal, this);
 	labelSatVal   = new QLabel("100.00%");
-	labelPosition = new QLabel("X=\tArea=\tL.Speed=\tR.Speed=\tDistance=");
+	labelPosition = new QLabel("X= Area= L.Speed= R.Speed= Distance=");
 
 	QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -63,7 +63,7 @@ void MyCameraWindow::timerEvent(QTimerEvent *) {
 	float distance;
 
 	vision_ui_get_values(&x, &area, &l_speed, &r_speed, &distance);
-	sprintf(text, "X=%d\tArea=%d\tL.Speed=%d R.Speed=%d Distance=%.2f", x, area, l_speed, r_speed, distance);
+	sprintf(text, "X=%d Area=%d L.Speed=%d R.Speed=%d Distance=%.2f", x, area, l_speed, r_speed, distance);
 	labelPosition->setText(text);
 
 	vision_ui_unlock_image();
