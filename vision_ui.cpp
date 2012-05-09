@@ -29,6 +29,6 @@ extern "C" void vision_ui_quit() {
 }
 
 extern "C" void vision_ui_update() {
-	mainWin->updateUIImage();
+	QApplication->postEvent(mainWin, new QEvent(QEvent::Type(1001)));
 }
 

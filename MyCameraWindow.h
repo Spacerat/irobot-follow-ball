@@ -23,6 +23,9 @@ class MyCameraWindow : public QWidget
 		QSlider       * sliderSat;
 		QLabel        * labelPosition;
 
+	protected:
+		void customEvent(QEvent* e);
+
         public:
 		MyCameraWindow(CvCapture * cam, QWidget * parent = 0);
 		void updateUICalibration(float hue, float sat);	

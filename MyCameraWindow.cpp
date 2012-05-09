@@ -51,6 +51,14 @@ MyCameraWindow::MyCameraWindow(CvCapture * cam, QWidget * parent) : QWidget(pare
 	setLayout(layout);
 }
 
+void MyCameraWindow::customEvent(QEvent* e)
+{
+	if(e->type() == (QEvent::Type)1001)
+	{
+		updateUIImage();
+	}
+}
+
 void MyCameraWindow::updateUIImage() {
 	IplImage * image = vision_getimage();
         if (image) cvwidget->putImage(image);
