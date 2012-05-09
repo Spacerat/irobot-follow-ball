@@ -54,14 +54,10 @@ MyCameraWindow::MyCameraWindow(CvCapture * cam, QWidget * parent) : QWidget(pare
 	startTimer(50);
 }
 
-void MyCameraWindow::timerEvent(QTimerEvent*) {
-{
-	if(e->type() == (QEvent::Type)1001)
-	{
-		vision_ui_lock_image();
-		updateUIImage();
-		vision_ui_unlock_image();
-	}
+void MyCameraWindow::timerEvent(QTimerEvent *) {
+	vision_ui_lock_image();
+	updateUIImage();
+	vision_ui_unlock_image();
 }
 
 void MyCameraWindow::updateUIImage() {

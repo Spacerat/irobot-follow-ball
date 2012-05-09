@@ -112,8 +112,8 @@ Writes the calibration values from the given file.
 int writeCalibration(const char * fileName) {
 	FILE * f = fopen(fileName, "wb");
 	if(!f) return -1;
-	fprintf(f, "%f", hueCal);
-	fprintf(f, "%f", hueCal);
+	fprintf(f, "%f\n", hueCal);
+	fprintf(f, "%f\n", satCal);
 	fclose(f);
 	return 0;
 }
