@@ -5,7 +5,7 @@
 #define RED_MIN 128
 #define RED_MUL 4
 #define BLUEGREEN_MUL 3
-#define AREA_MIN 1000
+#define AREA_MIN 200
 
 static int hueCal   = 0;
 static int hueRange = 20;
