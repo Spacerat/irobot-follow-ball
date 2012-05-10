@@ -141,7 +141,10 @@ int hue_test_func(unsigned int blue, unsigned int green, unsigned int red) {
 	int rg = red - green;
 	int rb = red - blue;
 	int gb = green - blue;
-	if (red >= green && red >= blue) { /* between -60 and 60 */
+	if (red == green && green == blue) {
+		hue = 0;
+	}
+	else if (red > green && red > blue) { /* between -60 and 60 */
 		if (green > blue) { /* between 0 and 60 */
 			hue = 60 * gb / rb;
 		}
@@ -149,7 +152,7 @@ int hue_test_func(unsigned int blue, unsigned int green, unsigned int red) {
 			hue = 60 * -gb / rg;
 		}
 	}
-	else if (green >= red && green >= blue) { /* between 60 and 180 */
+	else if (green > red && green > blue) { /* between 60 and 180 */
 		if (red > blue) { /* between 60 and 120 */
 			hue = 120 + 60 * rb / gb;
 		}
@@ -165,7 +168,11 @@ int hue_test_func(unsigned int blue, unsigned int green, unsigned int red) {
 			hue = -120 + 60 * rg / rb;
 		}
 	}
-	int sat = 255 - ((3*255 * min(min(red, green), blue)) / (red + green + blue));
+	int sat;
+	if (red == 0 && green == 0 && blue == 0)
+		sat = 0;
+	else
+		sat = 255 - ((3*255 * min(min(red, green), blue)) / (red + green + blue));
 
 	if (hue    > hueCal-hueRange       && hue    < hueCal+hueRange &&
 	    sat    > satCal-satRange       && sat    < satCal+satRange) {

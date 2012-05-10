@@ -46,7 +46,7 @@ void * control_thread_func(void * ptr) {
 	int xpos, area, width, l_speed, r_speed;
 	float diff, farea;
 	float offset, centre, distance;
-	roombath_direct_drive(500, 100);
+	//roombath_direct_drive(500, 100);
 
 	unsigned char l_bump, r_bump;
 
@@ -54,7 +54,7 @@ void * control_thread_func(void * ptr) {
 		vision_ui_lock_image();
 		vision_getframe();
 		area = 0;
-		roombath_read_bumps(&l_bump, &r_bump);
+		//roombath_read_bumps(&l_bump, &r_bump);
 		if (l_bump && r_bump) {
 			//Hit a wall in front
 			printf("Hit a wall in front.\n");
