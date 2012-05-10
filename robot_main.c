@@ -112,27 +112,33 @@ void * control_thread_func(void * ptr) {
 
 int main(int argc, char ** argv)
 {
+	int ui_only_mode = 0;
+	pthread_t roomba_thread, control_thread;
+
 	roombath_init();
 	vision_ui_init(argc, argv);
+
+	readCalibration("calibration.txt");
+	vision_init();
 
 	signal(SIGQUIT, shutdown);
 	signal(SIGINT, shutdown);
 	
-	if(roomba_open(ROOMBA_MODE_FULL) == -1) {
-		fprintf(stderr, "Open failed. Check the USB cable!\nHave you remembered to run $sudo chmod ugo+rw /dev/ttyUSB0 ?\n");
-		return 1;
+	if (roomba_open(ROOMBA_MODE_FULL) == -1) {
+		fprintf(stderr, "Open failed. Running in UI-only mode...\n");
+		ui_only_mode = 1;
 	}
-	pthread_t stdio_thread, roomba_thread, control_thread, vision_ui_thread;
-	readCalibration("calibration.txt");
-	vision_init();
-	pthread_create(&roomba_thread, NULL, &roomba_thread_func, NULL);
+	else {
+		pthread_create(&roomba_thread, NULL, &roomba_thread_func, NULL);
+	}
+
 	pthread_create(&control_thread, NULL, &control_thread_func, NULL);
 	
 	vision_ui_thread_func(NULL);
 
 	shutdown(0);
 	
-	pthread_join(roomba_thread, NULL);
+	if (!ui_only_mode) pthread_join(roomba_thread, NULL);
 	pthread_join(control_thread, NULL);
 
 	roombath_free();
