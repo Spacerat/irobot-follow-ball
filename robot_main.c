@@ -105,7 +105,7 @@ void * control_thread_func(void * ptr) {
 			ballfound = 1;
 			//roombath_direct_drive(l_speed,r_speed);
 		}
-		vision_ui_update_values(xpos, area, l_speed, r_speed, distance);
+		vision_ui_update_values(xpos, area, l_speed, r_speed, distance, ballfound);
 		vision_ui_unlock_image();
 		delay(10);
 	}

@@ -86,10 +86,10 @@ float calibrate(int xpos, int ypos) {
 		}
 	}
 	
-	hueCal = totalHue / 100.f;
-	satCal = totalSat / 100.f;
+	calibrationSetHue(totalHue / 100.f);
+	calibrationSetSat(totalSat / 100.f);
 	
-	return hueCal;
+	return 0.f;
 }
 
 /*
@@ -120,11 +120,11 @@ int writeCalibration(const char * fileName) {
 }
 
 void calibrationSetHue(float hue) {
-	hueCal = (int)(hue / M_PI * 180);
+	hueCal = (int)(hue / M_PI * 180.f);
 }
 
 void calibrationSetSat(float sat) {
-	satCal = (int)(sat * 255);
+	satCal = (int)(sat * 255.f);
 }
 
 float calibrationGetHue() {
@@ -132,7 +132,7 @@ float calibrationGetHue() {
 }
 
 float calibrationGetSat() {
-	return (float)satCal / 255;
+	return (float)satCal / 255.f;
 }
 
 int hue_test_func(unsigned int blue, unsigned int green, unsigned int red) {
@@ -165,7 +165,7 @@ int hue_test_func(unsigned int blue, unsigned int green, unsigned int red) {
 			hue = -120 + 60 * rg / rb;
 		}
 	}
-	int sat = 255 - (3 * min(min(red, green), blue) / (red + green + blue));
+	int sat = 255 - ((3*255 * min(min(red, green), blue)) / (red + green + blue));
 
 	if (hue    > hueCal-hueRange       && hue    < hueCal+hueRange &&
 	    sat    > satCal-satRange       && sat    < satCal+satRange) {
@@ -200,8 +200,8 @@ int image_process(int * xpos, int * area, int * width) {
 			unsigned char * green = pixel_data + 1;
 			unsigned char * red   = pixel_data + 2;
 
-			//if (hue_test_func(*blue, *green, *red)) {
-			if (original_test_func(blue, green, red)) {
+			if (hue_test_func(*blue, *green, *red)) {
+			//if (original_test_func(blue, green, red)) {
 				*red = 255;
 				*area = *area + 1;
 				moment = moment + x; 
