@@ -21,20 +21,20 @@ It's also a nice way to remote-control the robot.
 #define DIST_SCALE 1.f
 volatile int run = 1;
 
-void shutdown(int sig) {
+void shutdown(int __attribute__((__unused__)) sig) {
 	run = 0;
 	roombath_thread_end();
 }
 
-void * control_thread_func(void * ptr) {
+void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 	static int ballfound = 0;
 	
-	int xpos, area, width, l_speed, r_speed;
-	float diff, farea;
-	float offset, centre, distance;
+	int xpos = 0, area = 0, width = 0, l_speed = 0, r_speed = 0;
+	float diff = 0.f, farea = 0.f;
+	float centre = 0.f, distance = 0.f;
 	roombath_direct_drive(500, 100);
 
-	unsigned char l_bump, r_bump;
+	unsigned char l_bump = 0, r_bump = 0;
 
 	while (run) {
 		vision_ui_lock_image();
@@ -89,7 +89,7 @@ void * control_thread_func(void * ptr) {
 			r_speed = DIST_SCALE*distance - DIFF_SCALE*diff;
 
 			ballfound = 1;
-			roombath_direct_drive(l_speed,r_speed);
+			roombath_direct_drive(l_speed, r_speed);
 		}
 		vision_ui_update_values(xpos, area, l_speed, r_speed, distance, ballfound);
 		vision_ui_unlock_image();
@@ -121,7 +121,7 @@ int main(int argc, char ** argv)
 
 	pthread_create(&control_thread, NULL, &control_thread_func, NULL);
 	
-	vision_ui_thread_func(NULL);
+	vision_ui_run();
 
 	shutdown(0);
 	

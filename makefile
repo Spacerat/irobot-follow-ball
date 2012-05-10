@@ -2,10 +2,8 @@ CC=gcc
 CFLAGS=
 
 all: robot_main
-	
 
 robot_main: robot_main.c delay.o robot.o robot_threaded.o 
-	#gcc robot_main.c robot_threaded.o delay.o robot.o vision.o /usr/lib/libcxcore.so.2.1  -lcv -lhighgui  -lpthread -o robot_main
 	qmake -o qmakefile robot_main.pro
 	make -f qmakefile
 

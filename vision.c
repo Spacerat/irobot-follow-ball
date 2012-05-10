@@ -99,8 +99,8 @@ int readCalibration(const char * fileName) {
 	FILE * f = fopen(fileName, "rb");
 	if(!f) return -1;
 	float hue, sat;
-	fscanf(f, "%f", &hue);
-	fscanf(f, "%f", &sat);
+	int returned = fscanf(f, "%f", &hue);
+	returned = fscanf(f, "%f", &sat);
 	fclose(f);
 	calibrationSetHue(hue);
 	calibrationSetSat(sat);

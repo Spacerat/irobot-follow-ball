@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 void vision_ui_init(int argc, char ** argv);
-void * vision_ui_thread_func(void * ptr);
+void vision_ui_run();
 void vision_ui_quit();
 void vision_ui_lock_image();
 void vision_ui_unlock_image();
