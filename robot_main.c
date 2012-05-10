@@ -26,19 +26,6 @@ void shutdown(int sig) {
 	roombath_thread_end();
 }
 
-void * stdio_thread_func(void * ptr) {
-	char command [10];
-	
-	while (run) {
-		printf("> ");
-		scanf("%s", command);
-		if (strcmp("q", command) == 0) {
-			shutdown(0);
-		}
-		printf("\n");
-	}
-}
-
 void * control_thread_func(void * ptr) {
 	static int ballfound = 0;
 	
