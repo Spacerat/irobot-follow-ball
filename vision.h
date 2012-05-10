@@ -13,7 +13,7 @@ void vision_free();
 IplImage * vision_getframe();
 CvCapture * vision_getcamera();
 IplImage * vision_getimage();
-float calibrate(int xpos, int ypos);
+int calibrate(int xpos, int ypos);
 int image_process(int * xpos, int * area, int * width);
 int readCalibration(const char * fileName);
 int writeCalibration(const char * fileName);
