@@ -21,7 +21,6 @@ It's also a nice way to remote-control the robot.
 #define DIST_SCALE 1.f
 volatile int run = 1;
 
-
 void shutdown(int sig) {
 	run = 0;
 	roombath_thread_end();
@@ -46,7 +45,7 @@ void * control_thread_func(void * ptr) {
 	int xpos, area, width, l_speed, r_speed;
 	float diff, farea;
 	float offset, centre, distance;
-	//roombath_direct_drive(500, 100);
+	roombath_direct_drive(500, 100);
 
 	unsigned char l_bump, r_bump;
 
@@ -54,35 +53,35 @@ void * control_thread_func(void * ptr) {
 		vision_ui_lock_image();
 		vision_getframe();
 		area = 0;
-		//roombath_read_bumps(&l_bump, &r_bump);
+		roombath_read_bumps(&l_bump, &r_bump);
 		if (l_bump && r_bump) {
 			//Hit a wall in front
 			printf("Hit a wall in front.\n");
-			//roombath_direct_drive(-250, -250);
+			roombath_direct_drive(-250, -250);
 			delay(40);
-			//roombath_direct_drive(500, -500);
+			roombath_direct_drive(500, -500);
 			delay(5);
 		}
 		else if (l_bump) {
 			//Hit a wall on the left
 			printf("Hit a wall on left.\n");
-			//roombath_direct_drive(-250, -250);
+			roombath_direct_drive(-250, -250);
 			delay(40);
-			//roombath_direct_drive(500, -500);
+			roombath_direct_drive(500, -500);
 			delay(5);
 		}
 		else if (r_bump) {
 			//Hit a wall on the right
 			printf("Hit a wall on right.\n");
-			//roombath_direct_drive(-250, -250);
+			roombath_direct_drive(-250, -250);
 			delay(40);
-			//roombath_direct_drive(-500, 500);
+			roombath_direct_drive(-500, 500);
 			delay(5);
 		}
 		else if (!image_process(&xpos, &area, &width)) {
 			//No ball
 			if (ballfound) {
-				//roombath_direct_drive(500, 100);
+				roombath_direct_drive(500, 100);
 				printf("Ball lost.\n");
 				ballfound = 0;
 			}
@@ -103,7 +102,7 @@ void * control_thread_func(void * ptr) {
 			r_speed = DIST_SCALE*distance - DIFF_SCALE*diff;
 
 			ballfound = 1;
-			//roombath_direct_drive(l_speed,r_speed);
+			roombath_direct_drive(l_speed,r_speed);
 		}
 		vision_ui_update_values(xpos, area, l_speed, r_speed, distance, ballfound);
 		vision_ui_unlock_image();
@@ -119,26 +118,22 @@ int main(int argc, char ** argv)
 	signal(SIGQUIT, shutdown);
 	signal(SIGINT, shutdown);
 	
-	//if(roomba_open(ROOMBA_MODE_FULL) == -1) {
-	//	fprintf(stderr, "Open failed. Check the USB cable!\nHave you remembered to run $sudo chmod ugo+rw /dev/ttyUSB0 ?\n");
-	//	return 1;
-	//}
+	if(roomba_open(ROOMBA_MODE_FULL) == -1) {
+		fprintf(stderr, "Open failed. Check the USB cable!\nHave you remembered to run $sudo chmod ugo+rw /dev/ttyUSB0 ?\n");
+		return 1;
+	}
 	pthread_t stdio_thread, roomba_thread, control_thread, vision_ui_thread;
 	readCalibration("calibration.txt");
 	vision_init();
-	//pthread_create( &stdio_thread, NULL, &stdio_thread_func, NULL);
-	//pthread_create( &roomba_thread, NULL, &roomba_thread_func, NULL);
-	pthread_create( &control_thread, NULL, &control_thread_func, NULL);
-	//pthread_create( &vision_ui_thread, NULL, &vision_ui_thread_func, NULL);
+	pthread_create(&roomba_thread, NULL, &roomba_thread_func, NULL);
+	pthread_create(&control_thread, NULL, &control_thread_func, NULL);
 	
 	vision_ui_thread_func(NULL);
 
 	shutdown(0);
 	
-	//pthread_join( vision_ui_thread, NULL);
-	//pthread_join( stdio_thread, NULL);
-	//pthread_join( roomba_thread, NULL);
-	pthread_join( control_thread, NULL);
+	pthread_join(roomba_thread, NULL);
+	pthread_join(control_thread, NULL);
 
 	roombath_free();
 	vision_ui_quit();
