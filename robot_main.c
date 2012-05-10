@@ -105,7 +105,7 @@ int main(int argc, char ** argv)
 	roombath_init();
 	vision_ui_init(argc, argv);
 
-	readCalibration("calibration.txt");
+	if(readCalibration("calibration.txt")) printf("Calibration file invalid, ignoring...\n");
 	vision_init();
 
 	signal(SIGQUIT, shutdown);

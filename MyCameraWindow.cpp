@@ -91,7 +91,7 @@ void MyCameraWindow::hueValueChanged(int value) {
 	sprintf(text, "%.2f\xb0", (float)value / 50000.f * 180.f);
 	labelHueVal->setText(text);
 	calibrationSetHue((float)value / 50000.f * M_PI);
-	writeCalibration("calibration.txt");
+	if (writeCalibration("calibration.txt")) printf("Failed to write to calibration file.\n");
 }
 
 void MyCameraWindow::satValueChanged(int value) {
@@ -99,7 +99,7 @@ void MyCameraWindow::satValueChanged(int value) {
 	sprintf(text, "%.2f%%", (float)value / 1000.f);
 	labelSatVal->setText(text);
 	calibrationSetSat((float)value / 100000.f);
-	writeCalibration("calibration.txt");
+	if (writeCalibration("calibration.txt")) printf("Failed to write to calibration file.\n");
 }
 
 void QOpenCVWidget::mousePressEvent(QMouseEvent * event) {

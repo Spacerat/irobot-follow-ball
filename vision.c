@@ -22,9 +22,9 @@ Initiailises the camera and gets the first frame from it.
 */
 void vision_init() {
 	camera = cvCreateCameraCapture(0);
-	assert(camera);
+	assert(camera && "Failed to open camera.");
 	image = cvQueryFrame(camera);
-	assert(image);
+	assert(image && "Failed to read from camera.");
 }
 
 /*
@@ -61,9 +61,9 @@ IplImage * vision_getimage() {
 /*
 Calibrates the hue and saturation ranges to the pixel specified.
 */
-float calibrate(int xpos, int ypos) {
-	if(!image) return 0.f;
-	if(xpos < 5 || xpos > image->width || ypos < 5 || ypos > image->height) return 0.f;
+int calibrate(int xpos, int ypos) {
+	if(!image) return -1;
+	if(xpos < 5 || xpos > image->width || ypos < 5 || ypos > image->height) return 0;
 	
 	unsigned char * pixel_data = (unsigned char *)(image->imageData);
 	
@@ -89,7 +89,7 @@ float calibrate(int xpos, int ypos) {
 	calibrationSetHue(totalHue / 100.f);
 	calibrationSetSat(totalSat / 100.f);
 	
-	return 0.f;
+	return 0;
 }
 
 /*
@@ -97,11 +97,12 @@ Reads the calibration values from the given file.
 */
 int readCalibration(const char * fileName) {
 	FILE * f = fopen(fileName, "rb");
-	if(!f) return -1;
+	if (!f) return -1;
 	float hue, sat;
-	int returned = fscanf(f, "%f", &hue);
-	returned = fscanf(f, "%f", &sat);
+	int formatIncorrect = fscanf(f, "%f", &hue) != 1;
+	if (!formatIncorrect) formatIncorrect = fscanf(f, "%f", &sat) != 1;
 	fclose(f);
+	if (formatIncorrect) return -1;
 	calibrationSetHue(hue);
 	calibrationSetSat(sat);
 	return 0;
@@ -208,7 +209,6 @@ int image_process(int * xpos, int * area, int * width) {
 			unsigned char * red   = pixel_data + 2;
 
 			if (hue_test_func(*blue, *green, *red)) {
-			//if (original_test_func(blue, green, red)) {
 				*red = 255;
 				*area = *area + 1;
 				moment = moment + x; 
