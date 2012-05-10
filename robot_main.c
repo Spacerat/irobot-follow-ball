@@ -85,8 +85,14 @@ void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 			farea = farea/(10000.f-700.f);
 			distance = 1.f/(farea*farea);
 			
-			l_speed = DIST_SCALE*distance + DIFF_SCALE*diff;
-			r_speed = DIST_SCALE*distance - DIFF_SCALE*diff;
+			if (distance < 2.f) {
+				l_speed = DIFF_SCALE*diff;
+				r_speed = DIFF_SCALE*diff;
+			}
+			else {
+				l_speed = DIST_SCALE*distance + DIFF_SCALE*diff;
+                                r_speed = DIST_SCALE*distance - DIFF_SCALE*diff;
+			}
 
 			ballfound = 1;
 			roombath_direct_drive(l_speed, r_speed);
