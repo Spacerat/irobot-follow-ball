@@ -45,7 +45,7 @@ void roombath_thread_end() {
 	pthread_mutex_unlock(&command_mutex);
 }
 
-void * roomba_thread_func(void * __attribute__((__unused__))__ ptr) {
+void * roomba_thread_func(void * __attribute__((__unused__)) ptr) {
 	run_thread = 1;
 	while (run_thread) {
 		pthread_mutex_lock(&command_mutex);
