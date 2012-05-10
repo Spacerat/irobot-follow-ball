@@ -11,4 +11,4 @@ void roombath_direct_drive(int l, int r);
 void * roomba_thread_func(void * ptr);
 void roombath_read_bumps(unsigned char * l, unsigned char * r);
 
-oendif
+#endif
