@@ -1,8 +1,7 @@
 /*
+robot_main, software for making a Roomba robot following a ball!
 
-This program is basically me playing around with threads.
-It's also a nice way to remote-control the robot. 
-
+Written by Ethan Bishop, Joseph Atkins-Turkish and Tom Bell
 */
 
 #include <stdio.h>
