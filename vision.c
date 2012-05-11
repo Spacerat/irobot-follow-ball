@@ -182,9 +182,9 @@ int hue_test_func(unsigned int blue, unsigned int green, unsigned int red) {
 	else return 0;
 }
 
-int original_test_func(unsigned char * blue, unsigned char * green, unsigned char * red) {
-	if (((RED_MUL*(int)*red) > (BLUEGREEN_MUL*((int)*blue + (int)* green))) 
-            & (*red > RED_MIN)) return 1;
+int original_test_func(unsigned char blue, unsigned char green, unsigned char red) {
+	if (((RED_MUL*(int)red) > (BLUEGREEN_MUL*((int)blue + (int)green))) 
+            & (red > RED_MIN)) return 1;
 	else return 0;
 }
 
@@ -201,8 +201,12 @@ int image_process(int * xpos, int * area, int * width) {
 	*area = 0;
 	int moment = 0;
 	int y = 0;
+	int maxline = 0;
+	int maxlinepos = 0;
 	while (y<h) {
 		int x = 0;
+		int line = 0;
+		int linepos = 0;
 		while (x < w) {
 			unsigned char * blue  = pixel_data;
 			unsigned char * green = pixel_data + 1;
@@ -211,9 +215,18 @@ int image_process(int * xpos, int * area, int * width) {
 			if (hue_test_func(*blue, *green, *red)) {
 				*red = 255;
 				*area = *area + 1;
-				moment = moment + x; 
+				moment = moment + x;
+				line ++;
+				if (line == 1) {
+					linepos = x;
+				} 
 			} else {
 				*red = *red >> 1;
+				if (line > maxline) {
+					maxlinepos = linepos + (x - linepos)/2;
+					maxline = line;
+				}
+				line = 0;
 			}
 			*blue = *blue >> 1;
 			*green = *green >> 1;
@@ -223,7 +236,7 @@ int image_process(int * xpos, int * area, int * width) {
 		y = y + 1;
 	}
 	if (*area > AREA_MIN) {
-		*xpos = moment / *area;
+		*xpos = maxlinepos;//moment / *area;
 		unsigned char * blue_pixel =  (unsigned char *)(image->imageData) + c * *xpos;
 		for (y = 0; y < image->height; y++) {
 			* blue_pixel = 255;
