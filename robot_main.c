@@ -25,15 +25,18 @@ It's also a nice way to remote-control the robot.
 
 volatile int run = 1;
 
+/* Signal all threads to terminate */
 void shutdown(int __attribute__((__unused__)) sig) {
 	run = 0;
 	roombath_thread_end();
 }
 
-float flabs(float x) {
+/* Floating point absolute value */
+inline float flabs(float x) {
 	if (x > 0.f) return x; else return -x;
 }
 
+/* Process camera input, tell robot to do things */
 void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 	static int ballfound = 0;
 	static float pdiff = 0.0;
@@ -116,7 +119,7 @@ void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 			roombath_direct_drive(l_speed, r_speed);
 		}
 		vision_ui_update_values(xpos, area, l_speed, r_speed, distance, ballfound);
-		vision_ui_unlock_image();
+		vision_ui_unlock_image(); //TODO: Does this need to be here in non-ui mode?
 		delay(50);
 		pdiff = diff;
 	}
