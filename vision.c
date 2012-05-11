@@ -5,12 +5,12 @@
 #define RED_MIN 128
 #define RED_MUL 4
 #define BLUEGREEN_MUL 3
-#define AREA_MIN 200
-
+#define AREA_MIN 300
+#define LINE_MIN 26
 static int hueCal   = 0;
 static int hueRange = 20;
 static int satCal   = -51;
-static int satRange = 51;
+static int satRange = 75;
 
 #define min(x, y) ((x) < (y) ? (x) : (y))
 
@@ -182,9 +182,9 @@ int hue_test_func(unsigned int blue, unsigned int green, unsigned int red) {
 	else return 0;
 }
 
-int original_test_func(unsigned char * blue, unsigned char * green, unsigned char * red) {
-	if (((RED_MUL*(int)*red) > (BLUEGREEN_MUL*((int)*blue + (int)* green))) 
-            & (*red > RED_MIN)) return 1;
+int original_test_func(unsigned char blue, unsigned char green, unsigned char red) {
+	if (((RED_MUL*(int)red) > (BLUEGREEN_MUL*((int)blue + (int)green))) 
+            & (red > RED_MIN)) return 1;
 	else return 0;
 }
 
@@ -199,10 +199,13 @@ int image_process(int * xpos, int * area, int * width) {
 	int c = image->nChannels;
 	*width = image->width;
 	*area = 0;
-	int moment = 0;
 	int y = 0;
+	int maxline = 0;
+	int maxlinepos = 0;
 	while (y<h) {
 		int x = 0;
+		int line = 0;
+		int linepos = 0;
 		while (x < w) {
 			unsigned char * blue  = pixel_data;
 			unsigned char * green = pixel_data + 1;
@@ -211,9 +214,24 @@ int image_process(int * xpos, int * area, int * width) {
 			if (hue_test_func(*blue, *green, *red)) {
 				*red = 255;
 				*area = *area + 1;
-				moment = moment + x; 
+				line ++;
+				if (line == 1) {
+					linepos = x;
+				} 
 			} else {
 				*red = *red >> 1;
+				/* We want to find the largest horizontal line.
+				 If we just got to the end of a horizontal red line
+				 and it is the longest we've found, update the position
+				 we think the ball is.
+
+				 with this method, we entirely avoid the problem of
+				 sneaky little specks of red appearing everywhere. */ 
+				if (line > maxline) {
+					maxlinepos = linepos + (x - linepos)/2;
+					maxline = line;
+				}
+				line = 0;
 			}
 			*blue = *blue >> 1;
 			*green = *green >> 1;
@@ -222,8 +240,8 @@ int image_process(int * xpos, int * area, int * width) {
 		}
 		y = y + 1;
 	}
-	if (*area > AREA_MIN) {
-		*xpos = moment / *area;
+	if (*area > AREA_MIN && maxline > LINE_MIN) {
+		*xpos = maxlinepos;//moment / *area;
 		unsigned char * blue_pixel =  (unsigned char *)(image->imageData) + c * *xpos;
 		for (y = 0; y < image->height; y++) {
 			* blue_pixel = 255;

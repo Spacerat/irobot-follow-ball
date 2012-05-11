@@ -17,44 +17,57 @@ It's also a nice way to remote-control the robot.
 #include "delay.h"
 #include "vision_ui.h"
 
-#define DIFF_SCALE 50.f
-#define DIST_SCALE 1.f
+#define DIFF_SCALE 180.f
+#define DIST_SCALE 85.f
+#define DISTANCE_MULTIPLIER 180.f
+#define STOP_LIMIT 2.2
+#define TURN_LIMIT 2.5
+
+#define SEARCH_MINIMUM 60
+#define SEARCH_R_START 150.f
 volatile int run = 1;
 
+/* Signal all threads to terminate */
 void shutdown(int __attribute__((__unused__)) sig) {
 	run = 0;
 	roombath_thread_end();
 }
 
+/* Floating point absolute value */
+inline float flabs(float x) {
+	if (x > 0.f) return x; else return -x;
+}
+
+/* Process camera input, tell robot to do things */
 void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 	static int ballfound = 0;
-	
+	static float search_l = SEARCH_R_START;
 	int xpos = 0, area = 0, width = 0, l_speed = 0, r_speed = 0;
 	float diff = 0.f, farea = 0.f;
 	float centre = 0.f, distance = 0.f;
-	roombath_direct_drive(500, 100);
 
-	unsigned char l_bump = 0, r_bump = 0;
+	unsigned char l_bump = 0, r_bump = 0; //unused for now.
 
 	while (run) {
 		vision_ui_lock_image();
 		vision_getframe();
 		area = 0;
 		roombath_read_bumps(&l_bump, &r_bump);
-		if (l_bump && r_bump) {
+		if (l_bump || r_bump) {
 			//Hit a wall in front
 			printf("Hit a wall in front.\n");
 			roombath_direct_drive(-250, -250);
 			delay(40);
-			roombath_direct_drive(500, -500);
-			delay(5);
+			roombath_direct_drive(200, -200);
+			delay(80);
 		}
+/*
 		else if (l_bump) {
 			//Hit a wall on the left
 			printf("Hit a wall on left.\n");
 			roombath_direct_drive(-250, -250);
 			delay(40);
-			roombath_direct_drive(500, -500);
+			roombath_direct_drive(200, -200);
 			delay(5);
 		}
 		else if (r_bump) {
@@ -62,34 +75,49 @@ void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 			printf("Hit a wall on right.\n");
 			roombath_direct_drive(-250, -250);
 			delay(40);
-			roombath_direct_drive(-500, 500);
+			roombath_direct_drive(-200, 200);
 			delay(5);
 		}
+*/
 		else if (!image_process(&xpos, &area, &width)) {
-			//No ball
-			if (ballfound) {
-				roombath_direct_drive(500, 100);
-				printf("Ball lost.\n");
-				ballfound = 0;
-			}
+			// No ball
+			roombath_direct_drive(SEARCH_MINIMUM + 10 + (int) search_l, SEARCH_MINIMUM);
+			printf("Ball lost.\n");
+			ballfound = 0;
+			search_l *= 0.99;
+			
 		}
 		else {
 			if (ballfound == 0) {
 				printf("Ball found!\n");
+				search_l = SEARCH_R_START;
+				/* This is very important! The webcam has a delay of
+				  about one on the input. This means that by the time 
+				  our program gets the ball position, we have already
+				  turned for a second too long. So, we just turn back! */ 
+				roombath_direct_drive(-150, 150);
+				delay(400);
 			}
 			//Ball found
 			farea = (float)area;
 			centre = width / 2.0f;
 			diff = 2.0f*(xpos - centre)/width;
-			farea -= 700.f;
-			farea = farea/(10000.f-700.f);
-			distance = 1.f/(farea*farea);
+
+			/* I'm not sure how good of an idea this is but it seems to 
+			 not break things at least. Basically, the more we need to turn,
+			 the less we should be going forward. */
 			
-			if (distance < 2.f) {
+			distance = DISTANCE_MULTIPLIER/(sqrt(farea));
+			printf("diff: %f\ndisy: %f\n", diff, distance);
+			if (distance < STOP_LIMIT) {
+				l_speed = r_speed = 0;
+			}	
+			else if (distance < TURN_LIMIT) {
 				l_speed = DIFF_SCALE*diff;
-				r_speed = DIFF_SCALE*diff;
+				r_speed = -DIFF_SCALE*diff;
 			}
 			else {
+				
 				l_speed = DIST_SCALE*distance + DIFF_SCALE*diff;
                                 r_speed = DIST_SCALE*distance - DIFF_SCALE*diff;
 			}
@@ -98,8 +126,8 @@ void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 			roombath_direct_drive(l_speed, r_speed);
 		}
 		vision_ui_update_values(xpos, area, l_speed, r_speed, distance, ballfound);
-		vision_ui_unlock_image();
-		delay(10);
+		vision_ui_unlock_image(); //TODO: Does this need to be here in non-ui mode?
+		delay(50);
 	}
 }
 
@@ -109,7 +137,6 @@ int main(int argc, char ** argv)
 	pthread_t roomba_thread, control_thread;
 
 	roombath_init();
-	vision_ui_init(argc, argv);
 
 	if(readCalibration("calibration.txt")) printf("Calibration file invalid, ignoring...\n");
 	vision_init();
@@ -127,15 +154,18 @@ int main(int argc, char ** argv)
 
 	pthread_create(&control_thread, NULL, &control_thread_func, NULL);
 	
-	vision_ui_run();
-
+	if (ui_only_mode) {
+		vision_ui_init(argc, argv);
+		vision_ui_run();
+	}
+	else getchar();
 	shutdown(0);
 	
 	if (!ui_only_mode) pthread_join(roomba_thread, NULL);
 	pthread_join(control_thread, NULL);
 
 	roombath_free();
-	vision_ui_quit();
+	if (ui_only_mode) vision_ui_quit();
 
 	return 0;
 }
