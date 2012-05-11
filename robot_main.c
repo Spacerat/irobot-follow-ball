@@ -86,24 +86,10 @@ void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 			farea = (float)area;
 			centre = width / 2.0f;
 			diff = 2.0f*(xpos - centre)/width;
-			float offcentreness = 1.f - abs(diff);
-			//farea -= 700.f;
-			//farea = farea/(5000.f);
+			float offcentreness = 1.f - flabs(diff);
+			
 			distance = 180.f/(sqrt(farea));
 			printf("diff: %f\ndisy: %f\n", diff, distance);
-			/*
-			if (distance > 1.1f) {
-				if (diff < 0.1 && diff > -0.1) {
-					l_speed = r_speed = 200.f;
-					
-				}
-				else {
-					l_speed = 100.f * diff;  - 100.f * flabs(diff - pdiff);
-					r_speed = - 100.f * diff;  - 100.f * flabs(diff - pdiff);
-				}
-			}	
-			else l_speed = r_speed = 0; 
-			*/
 			
 			if (distance < 1.f) {
 				l_speed = DIFF_SCALE*diff;
