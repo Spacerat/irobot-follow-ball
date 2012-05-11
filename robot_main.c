@@ -20,9 +20,11 @@ It's also a nice way to remote-control the robot.
 #define DIFF_SCALE 180.f
 #define DIST_SCALE 85.f
 #define DISTANCE_MULTIPLIER 180.f
-#define STOP_LIMIT 0.5
-#define TURN_LIMIT 2.f
+#define STOP_LIMIT 2.2
+#define TURN_LIMIT 2.5
 
+#define SEARCH_MINIMUM 60
+#define SEARCH_R_START 150.f
 volatile int run = 1;
 
 /* Signal all threads to terminate */
@@ -39,8 +41,7 @@ inline float flabs(float x) {
 /* Process camera input, tell robot to do things */
 void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 	static int ballfound = 0;
-	static float pdiff = 0.0;
-	static float search_l = 200.f;
+	static float search_l = SEARCH_R_START;
 	int xpos = 0, area = 0, width = 0, l_speed = 0, r_speed = 0;
 	float diff = 0.f, farea = 0.f;
 	float centre = 0.f, distance = 0.f;
@@ -52,14 +53,15 @@ void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 		vision_getframe();
 		area = 0;
 		roombath_read_bumps(&l_bump, &r_bump);
-		if (l_bump && r_bump) {
+		if (l_bump || r_bump) {
 			//Hit a wall in front
 			printf("Hit a wall in front.\n");
 			roombath_direct_drive(-250, -250);
 			delay(40);
 			roombath_direct_drive(200, -200);
-			delay(5);
+			delay(80);
 		}
+/*
 		else if (l_bump) {
 			//Hit a wall on the left
 			printf("Hit a wall on left.\n");
@@ -76,9 +78,10 @@ void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 			roombath_direct_drive(-200, 200);
 			delay(5);
 		}
+*/
 		else if (!image_process(&xpos, &area, &width)) {
 			// No ball
-			roombath_direct_drive(100 + (int) search_l, 90);
+			roombath_direct_drive(SEARCH_MINIMUM + 10 + (int) search_l, SEARCH_MINIMUM);
 			printf("Ball lost.\n");
 			ballfound = 0;
 			search_l *= 0.99;
@@ -87,7 +90,7 @@ void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 		else {
 			if (ballfound == 0) {
 				printf("Ball found!\n");
-				search_l = 200.f;
+				search_l = SEARCH_R_START;
 				/* This is very important! The webcam has a delay of
 				  about one on the input. This means that by the time 
 				  our program gets the ball position, we have already
@@ -103,22 +106,20 @@ void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 			/* I'm not sure how good of an idea this is but it seems to 
 			 not break things at least. Basically, the more we need to turn,
 			 the less we should be going forward. */
-			float offcentreness = 1.f - flabs(diff);
 			
 			distance = DISTANCE_MULTIPLIER/(sqrt(farea));
 			printf("diff: %f\ndisy: %f\n", diff, distance);
-			
-			if (distance < TURN_LIMIT) {
+			if (distance < STOP_LIMIT) {
+				l_speed = r_speed = 0;
+			}	
+			else if (distance < TURN_LIMIT) {
 				l_speed = DIFF_SCALE*diff;
 				r_speed = -DIFF_SCALE*diff;
 			}
-			else if (distance < STOP_LIMIT) {
-				l_speed = r_speed = 0;
-			}
 			else {
 				
-				l_speed = DIST_SCALE*distance*offcentreness + DIFF_SCALE*diff;
-                                r_speed = DIST_SCALE*distance*offcentreness - DIFF_SCALE*diff;
+				l_speed = DIST_SCALE*distance + DIFF_SCALE*diff;
+                                r_speed = DIST_SCALE*distance - DIFF_SCALE*diff;
 			}
 
 			ballfound = 1;
@@ -127,7 +128,6 @@ void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 		vision_ui_update_values(xpos, area, l_speed, r_speed, distance, ballfound);
 		vision_ui_unlock_image(); //TODO: Does this need to be here in non-ui mode?
 		delay(50);
-		pdiff = diff;
 	}
 }
 

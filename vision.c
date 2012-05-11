@@ -5,8 +5,8 @@
 #define RED_MIN 128
 #define RED_MUL 4
 #define BLUEGREEN_MUL 3
-#define AREA_MIN 200
-
+#define AREA_MIN 300
+#define LINE_MIN 26
 static int hueCal   = 0;
 static int hueRange = 20;
 static int satCal   = -51;
@@ -240,7 +240,7 @@ int image_process(int * xpos, int * area, int * width) {
 		}
 		y = y + 1;
 	}
-	if (*area > AREA_MIN) {
+	if (*area > AREA_MIN && maxline > LINE_MIN) {
 		*xpos = maxlinepos;//moment / *area;
 		unsigned char * blue_pixel =  (unsigned char *)(image->imageData) + c * *xpos;
 		for (y = 0; y < image->height; y++) {
