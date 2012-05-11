@@ -21,7 +21,7 @@ It's also a nice way to remote-control the robot.
 #define DIST_SCALE 85.f
 #define DISTANCE_MULTIPLIER 180.f
 #define STOP_LIMIT 0.5
-#define TURN_LIMIT 1.f
+#define TURN_LIMIT 2.f
 
 volatile int run = 1;
 
@@ -40,7 +40,7 @@ inline float flabs(float x) {
 void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 	static int ballfound = 0;
 	static float pdiff = 0.0;
-	static float search_l = 300.f;
+	static float search_l = 200.f;
 	int xpos = 0, area = 0, width = 0, l_speed = 0, r_speed = 0;
 	float diff = 0.f, farea = 0.f;
 	float centre = 0.f, distance = 0.f;
@@ -51,7 +51,7 @@ void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 		vision_ui_lock_image();
 		vision_getframe();
 		area = 0;
-		//roombath_read_bumps(&l_bump, &r_bump);
+		roombath_read_bumps(&l_bump, &r_bump);
 		if (l_bump && r_bump) {
 			//Hit a wall in front
 			printf("Hit a wall in front.\n");
@@ -78,16 +78,22 @@ void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 		}
 		else if (!image_process(&xpos, &area, &width)) {
 			// No ball
-			roombath_direct_drive((int)search_l, 40);
+			roombath_direct_drive(100 + (int) search_l, 90);
 			printf("Ball lost.\n");
 			ballfound = 0;
-			search_l += 1;
+			search_l *= 0.99;
 			
 		}
 		else {
 			if (ballfound == 0) {
 				printf("Ball found!\n");
-				search_l = 300;
+				search_l = 200.f;
+				/* This is very important! The webcam has a delay of
+				  about one on the input. This means that by the time 
+				  our program gets the ball position, we have already
+				  turned for a second too long. So, we just turn back! */ 
+				roombath_direct_drive(-150, 150);
+				delay(400);
 			}
 			//Ball found
 			farea = (float)area;
@@ -111,8 +117,8 @@ void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 			}
 			else {
 				
-				l_speed = DIST_SCALE*distance*offcentreness + DIFF_SCALE*diff*diff*diff;
-                                r_speed = DIST_SCALE*distance*offcentreness - DIFF_SCALE*diff*diff*diff;
+				l_speed = DIST_SCALE*distance*offcentreness + DIFF_SCALE*diff;
+                                r_speed = DIST_SCALE*distance*offcentreness - DIFF_SCALE*diff;
 			}
 
 			ballfound = 1;
