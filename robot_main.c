@@ -29,9 +29,12 @@ Written by Ethan Bishop, Joseph Atkins-Turkish and Tom Bell
 volatile int run = 1;
 
 /* Signal all threads to terminate */
-void shutdown(int __attribute__((__unused__)) sig) {
+void shutdown(int sig) {
 	run = 0;
-	roombath_thread_end();
+	roombath_thread_end();	
+	roombath_free();
+	signal(sig, SIG_DFL);
+	raise(sig);
 }
 
 /* Floating point absolute value */
@@ -170,7 +173,6 @@ int main(int argc, char ** argv)
 	if (!ui_only_mode) pthread_join(roomba_thread, NULL);
 	pthread_join(control_thread, NULL);
 
-	roombath_free();
 	if (ui_only_mode) vision_ui_quit();
 
 	return 0;
