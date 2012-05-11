@@ -131,6 +131,7 @@ void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 		vision_ui_unlock_image();
 		delay(50);
 	}
+	return 0;
 }
 
 /* Here we start all the child threads and set things up.*/
