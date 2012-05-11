@@ -120,22 +120,27 @@ int writeCalibration(const char * fileName) {
 	return 0;
 }
 
+/* Set the hue to detect */
 void calibrationSetHue(float hue) {
 	hueCal = (int)(hue / M_PI * 180.f);
 }
 
+/* Set the saturation to detect */
 void calibrationSetSat(float sat) {
 	satCal = (int)(sat * 255.f);
 }
 
+/* Get the hue we want to find */
 float calibrationGetHue() {
 	return (float)hueCal / 180.f * M_PI;
 }
 
+/* Get the saturation we want to find */
 float calibrationGetSat() {
 	return (float)satCal / 255.f;
 }
 
+/* Return 1 if the given RGB values are close enough to the calibration hue/saturation settings */
 int hue_test_func(unsigned int blue, unsigned int green, unsigned int red) {
 
 	int hue;
@@ -182,6 +187,7 @@ int hue_test_func(unsigned int blue, unsigned int green, unsigned int red) {
 	else return 0;
 }
 
+/* The original vision (for testing purposes, no longer used)  */
 int original_test_func(unsigned char blue, unsigned char green, unsigned char red) {
 	if (((RED_MUL*(int)red) > (BLUEGREEN_MUL*((int)blue + (int)green))) 
             & (red > RED_MIN)) return 1;
@@ -240,9 +246,13 @@ int image_process(int * xpos, int * area, int * width) {
 		}
 		y = y + 1;
 	}
+
+	/* It would be more accurate to calculate a LINE_MIN based on the area,
+	  but it's not really worth the trouble */
 	if (*area > AREA_MIN && maxline > LINE_MIN) {
 		*xpos = maxlinepos;//moment / *area;
 		unsigned char * blue_pixel =  (unsigned char *)(image->imageData) + c * *xpos;
+		/* Draw a nice blue line, for UI mode. */
 		for (y = 0; y < image->height; y++) {
 			* blue_pixel = 255;
 			blue_pixel = blue_pixel + c*w;

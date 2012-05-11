@@ -17,14 +17,16 @@ It's also a nice way to remote-control the robot.
 #include "delay.h"
 #include "vision_ui.h"
 
-#define DIFF_SCALE 180.f
-#define DIST_SCALE 85.f
-#define DISTANCE_MULTIPLIER 180.f
-#define STOP_LIMIT 2.2
-#define TURN_LIMIT 2.5
+#define DIFF_SCALE 180.f           //Multiplier for how fast to turn
+#define DIST_SCALE 85.f	           //Multiplier for how fast to charge forwards
+#define DISTANCE_MULTIPLIER 180.f  //Multiplier for calculating a sensible distance value
+#define STOP_LIMIT 2.2             //Distance at which we decide we have reached the ball
+#define TURN_LIMIT 2.5             //Distance at which it is sensible to stop moving and just turn instead.
 
-#define SEARCH_MINIMUM 60
-#define SEARCH_R_START 150.f
+#define SEARCH_MINIMUM 60          //Minimum motor speed when looking for the ball
+#define SEARCH_R_START 150.f       //Maximum additional speed to add to the LEFT wheel when looking for the ball.
+
+
 volatile int run = 1;
 
 /* Signal all threads to terminate */
@@ -61,6 +63,9 @@ void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 			roombath_direct_drive(200, -200);
 			delay(80);
 		}
+		/* Commented out because this cases the roomba to get stuck 
+		 between chair legs. Not removed because it might be useful
+		 in other situations. */
 /*
 		else if (l_bump) {
 			//Hit a wall on the left
@@ -91,24 +96,23 @@ void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 			if (ballfound == 0) {
 				printf("Ball found!\n");
 				search_l = SEARCH_R_START;
-				/* This is very important! The webcam has a delay of
-				  about one on the input. This means that by the time 
-				  our program gets the ball position, we have already
-				  turned for a second too long. So, we just turn back! */ 
+			/* This is very important! The webcam has a delay of
+			 about one on the input. This means that by the time 
+			 our program gets the ball position, we have already
+			 turned for a second too long. So, we just turn back! */ 
 				roombath_direct_drive(-150, 150);
 				delay(400);
 			}
-			//Ball found
+			//Ball found! Let's do some control.
+
 			farea = (float)area;
 			centre = width / 2.0f;
+			//How far accross the screen, (-1 to 1) is the ball?
 			diff = 2.0f*(xpos - centre)/width;
-
-			/* I'm not sure how good of an idea this is but it seems to 
-			 not break things at least. Basically, the more we need to turn,
-			 the less we should be going forward. */
-			
+			//How far away is the ball?
 			distance = DISTANCE_MULTIPLIER/(sqrt(farea));
 			printf("diff: %f\ndisy: %f\n", diff, distance);
+			
 			if (distance < STOP_LIMIT) {
 				l_speed = r_speed = 0;
 			}	
@@ -117,7 +121,6 @@ void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 				r_speed = -DIFF_SCALE*diff;
 			}
 			else {
-				
 				l_speed = DIST_SCALE*distance + DIFF_SCALE*diff;
                                 r_speed = DIST_SCALE*distance - DIFF_SCALE*diff;
 			}
@@ -126,11 +129,12 @@ void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 			roombath_direct_drive(l_speed, r_speed);
 		}
 		vision_ui_update_values(xpos, area, l_speed, r_speed, distance, ballfound);
-		vision_ui_unlock_image(); //TODO: Does this need to be here in non-ui mode?
+		vision_ui_unlock_image();
 		delay(50);
 	}
 }
 
+/* Here we start all the child threads and set things up.*/
 int main(int argc, char ** argv)
 {
 	int ui_only_mode = 0;
@@ -141,9 +145,11 @@ int main(int argc, char ** argv)
 	if(readCalibration("calibration.txt")) printf("Calibration file invalid, ignoring...\n");
 	vision_init();
 
+	//Turn the robot off if we kill the program.
 	signal(SIGQUIT, shutdown);
 	signal(SIGINT, shutdown);
 	
+	//Figure out whether we run in calibration mode or control mode.
 	if (roomba_open(ROOMBA_MODE_FULL) == -1) {
 		fprintf(stderr, "Open failed. Running in UI-only mode...\n");
 		ui_only_mode = 1;
