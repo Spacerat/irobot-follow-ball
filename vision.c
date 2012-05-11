@@ -199,7 +199,6 @@ int image_process(int * xpos, int * area, int * width) {
 	int c = image->nChannels;
 	*width = image->width;
 	*area = 0;
-	int moment = 0;
 	int y = 0;
 	int maxline = 0;
 	int maxlinepos = 0;
@@ -215,13 +214,19 @@ int image_process(int * xpos, int * area, int * width) {
 			if (hue_test_func(*blue, *green, *red)) {
 				*red = 255;
 				*area = *area + 1;
-				moment = moment + x;
 				line ++;
 				if (line == 1) {
 					linepos = x;
 				} 
 			} else {
 				*red = *red >> 1;
+				/* We want to find the largest horizontal line.
+				 If we just got to the end of a horizontal red line
+				 and it is the longest we've found, update the position
+				 we think the ball is.
+
+				 with this method, we entirely avoid the problem of
+				 sneaky little specks of red appearing everywhere. */ 
 				if (line > maxline) {
 					maxlinepos = linepos + (x - linepos)/2;
 					maxline = line;

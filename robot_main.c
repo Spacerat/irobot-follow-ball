@@ -19,6 +19,10 @@ It's also a nice way to remote-control the robot.
 
 #define DIFF_SCALE 180.f
 #define DIST_SCALE 85.f
+#define DISTANCE_MULTIPLIER 180.f
+#define STOP_LIMIT 0.5
+#define TURN_LIMIT 1.f
+
 volatile int run = 1;
 
 void shutdown(int __attribute__((__unused__)) sig) {
@@ -33,13 +37,12 @@ float flabs(float x) {
 void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 	static int ballfound = 0;
 	static float pdiff = 0.0;
+	static float search_l = 300.f;
 	int xpos = 0, area = 0, width = 0, l_speed = 0, r_speed = 0;
 	float diff = 0.f, farea = 0.f;
 	float centre = 0.f, distance = 0.f;
-	
-	unsigned char l_bump = 0, r_bump = 0;
-	//delay(5000);
 
+	unsigned char l_bump = 0, r_bump = 0; //unused for now.
 
 	while (run) {
 		vision_ui_lock_image();
@@ -71,31 +74,36 @@ void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 			delay(5);
 		}
 		else if (!image_process(&xpos, &area, &width)) {
-			//No ball
-			if (ballfound || 1) {
-				roombath_direct_drive(300, 40);
-				printf("Ball lost.\n");
-				ballfound = 0;
-			}
+			// No ball
+			roombath_direct_drive((int)search_l, 40);
+			printf("Ball lost.\n");
+			ballfound = 0;
+			search_l += 1;
+			
 		}
 		else {
 			if (ballfound == 0) {
 				printf("Ball found!\n");
+				search_l = 300;
 			}
 			//Ball found
 			farea = (float)area;
 			centre = width / 2.0f;
 			diff = 2.0f*(xpos - centre)/width;
+
+			/* I'm not sure how good of an idea this is but it seems to 
+			 not break things at least. Basically, the more we need to turn,
+			 the less we should be going forward. */
 			float offcentreness = 1.f - flabs(diff);
 			
-			distance = 180.f/(sqrt(farea));
+			distance = DISTANCE_MULTIPLIER/(sqrt(farea));
 			printf("diff: %f\ndisy: %f\n", diff, distance);
 			
-			if (distance < 1.f) {
+			if (distance < TURN_LIMIT) {
 				l_speed = DIFF_SCALE*diff;
 				r_speed = -DIFF_SCALE*diff;
 			}
-			else if (distance < 0.5) {
+			else if (distance < STOP_LIMIT) {
 				l_speed = r_speed = 0;
 			}
 			else {
@@ -109,7 +117,7 @@ void * control_thread_func(void __attribute__((__unused__)) * ptr) {
 		}
 		vision_ui_update_values(xpos, area, l_speed, r_speed, distance, ballfound);
 		vision_ui_unlock_image();
-		delay(10);
+		delay(50);
 		pdiff = diff;
 	}
 }
