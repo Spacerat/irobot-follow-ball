@@ -10,7 +10,7 @@
 static int hueCal   = 0;
 static int hueRange = 20;
 static int satCal   = -51;
-static int satRange = 51;
+static int satRange = 75;
 
 #define min(x, y) ((x) < (y) ? (x) : (y))
 
